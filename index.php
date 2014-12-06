@@ -1,3 +1,18 @@
+<?php
+	echo 'Hello ' . htmlspecialchars($_GET["code"]) . '!';
+	echo 'Hello ' . htmlspecialchars($_GET["state"]) . '!';
+
+	$code = htmlspecialchars($_GET["code"]);
+	$state = htmlspecialchars($_GET["state"]);
+	$error = htmlspecialchars($_GET["error"]);
+
+
+?>
+
+
+
+
+
 <html>
 
 <head>
