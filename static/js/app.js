@@ -1,6 +1,7 @@
 $(document).ready(function() {
     var init = function() {
 	   initHeader();
+	   initBindings();
 
 	   if (annyang) {
 		  // Let's define our first command. First the text we expect, and then the function it should call
@@ -58,6 +59,13 @@ $(document).ready(function() {
     var initHeader = function() {
 	   var header = Handlebars.compile($("#header-template").html());
 	   $("#header").html(header);
+    };
+
+    var initBindings = function() {
+	   $("#music-search-form").on("submit", function() {
+		  var $searchBox = $(this).find("[name=music-searchbox]");
+		  console.log($searchBox);
+	   });
     };
 
     init();
