@@ -1,14 +1,5 @@
 $(function () {
-
-	var loginWithSpotify = function () {
-		$.ajax({
-			url: 'https://accounts.spotify.com/authorize',
-			data: {
-				client_id: '1060cd75ef7745668f19034484496bda',
-				response_type: 'code',
-				redirect_uri: 'http://kabirsohel.koding.io'
-			}		
-		});
-	}
-	$('#spotifyLogin').on('click', loginWithSpotify);
+	$('#spotifyLogin').on('click', function () {
+		location.href = "https://accounts.spotify.com/authorize?client_id=dc83e06265e64aae813fd37a90f949ea&response_type=code&redirect_uri=http:%2F%2Fkabirsohel.koding.io%2F";
+	});
 });

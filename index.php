@@ -1,10 +1,10 @@
 <?php
-	echo 'Hello ' . htmlspecialchars($_GET["code"]) . '!';
-	echo 'Hello ' . htmlspecialchars($_GET["state"]) . '!';
 
 	$code = htmlspecialchars($_GET["code"]);
 	$state = htmlspecialchars($_GET["state"]);
 	$error = htmlspecialchars($_GET["error"]);
+	
+	echo "Code = %s state = %s error = %s", $code, $state, $error;
 
 	$url = 'http://server.com/path';
 	$data = array('key1' => 'value1', 'key2' => 'value2');
