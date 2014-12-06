@@ -4,7 +4,10 @@
 	$state = htmlspecialchars($_GET["state"]);
 	$error = htmlspecialchars($_GET["error"]);
 	
-	echo "Code = %s state = %s error = %s", $code, $state, $error;
+	echo "Code = $code, state = $state, error = $error";
+	if(error == NULL){
+		echo "\nLoggedin successfully";
+	}
 
 	$url = 'http://server.com/path';
 	$data = array('key1' => 'value1', 'key2' => 'value2');
