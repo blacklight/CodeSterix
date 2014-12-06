@@ -1,71 +1,98 @@
 $(document).ready(function() {
+    var searchItemTemplate = Handlebars.compile($("#search-item").html()),
+	   headerTemplate = Handlebars.compile($("#header-template").html());
+
     var init = function() {
 	   initHeader();
 	   initBindings();
-
-	   if (annyang) {
-		  // Let's define our first command. First the text we expect, and then the function it should call
-		  var commands = {
-			 'play (the song) *song': playSong,
-			 'play (the song) *song by *artist': playSong,
-			 'stop': stop
-		  };
-
-		  var audio = null;
-		  function playSong(song, artist) {
-			 var recognizedElement = document.getElementById('recognized');
-			 recognizedElement.innerText = 'Recognized "' + song + (artist ? ' by ' + artist : '') + '"';
-			 console.log("PlaySong", song);
-			 var req = new XMLHttpRequest();
-			 req.open('GET', 'https://api.spotify.com/v1/search?type=track&q=' + encodeURIComponent(song), true);
-
-			 req.onreadystatechange = function() {
-				if (req.readyState == 4 && req.status == 200){
-				    var data = JSON.parse(req.responseText);
-				    if (data.tracks.items[0]) {
-					   stop();
-					   var matchedElement = document.getElementById('matched');
-					   matchedElement.innerHTML = '<div class="media"><img src="' + data.tracks.items[0].album.images[0].url + '" alt="Cover art of ' + data.tracks.items[0].album.name + '" width="300"><p>Playing ' + data.tracks.items[0].name + ' by ' + data.tracks.items[0].artists[0].name +'</p></div>';
-					   audio = new Audio(data.tracks.items[0].preview_url);
-					   audio.play();
-				    }
-				}
-			 };
-			 req.send(null);
-		  }
-
-		  function stop() {
-			 if (audio) {
-				audio.pause();
-				audio = null;
-			 }
-		  } 
-
-		  function stop() {
-			 if (audio) {
-				audio.pause();
-			 }
-		  }    
-
-		  // Add our commands to annyang
-		  annyang.addCommands(commands);
-
-		  // Start listening. You can call this here, or attach this call to an event, button, etc.
-		  annyang.start();
-		  annyang.debug();
-	   }
     };
 
     var initHeader = function() {
-	   var header = Handlebars.compile($("#header-template").html());
-	   $("#header").html(header);
+	   $("#header").html(headerTemplate);
     };
 
     var initBindings = function() {
-	   $("#music-search-form").on("submit", function() {
-		  var $searchBox = $(this).find("[name=music-searchbox]");
-		  console.log($searchBox);
+	   var pendingRequest;
+
+	   $("#music-search-box")
+	   .on("keypress", function(event) {
+		  if (event.which === 13) {
+			 var spotifyID = $(this).val().trim();
+			 loadTrack(spotifyID);
+		  }
+	   })
+	   .autocomplete({
+		  minLength: 4,
+		  html: true,
+		  select: function(event, ui) {
+			 var $item = $(ui.item.value);
+			 if ($item.length && $item.data("id")) {
+				setTimeout(function() {
+				    $("#music-search-box").val($item.data("artist") + " - " + $item.data("name"));
+				    loadTrack($item.data("id"));
+				}, 10)
+			 } else {
+				setTimeout(function() {
+				    $("#music-search-box").val("");
+				}, 10)
+			 }
+		  },
+
+		  focus: function() {
+			 return false;
+		  },
+
+		  source: function(request, response) {
+			 $("#music-search-box").addClass("loading");
+			 if (pendingRequest) {
+				clearTimeout(pendingRequest);
+			 }
+
+			 pendingRequest = setTimeout(function() {
+				$.get("https://api.spotify.com/v1/search",
+				    {
+					   type: "track",
+					   q: request.term,
+				    }
+				)
+				.success(function(data) {
+				    if (data.tracks.items) {
+					   var tracks = [];
+					   data.tracks.items.forEach(function(item) {
+						  item.artist = "";
+						  item.artists.forEach(function(artist) {
+							 if (item.artist.length > 0) {
+								item.artist += ", ";
+							 }
+							 item.artist += artist.name;
+						  });
+
+						  tracks.push(searchItemTemplate(item));
+					   });
+
+					   response(tracks);
+				    } else {
+					   tracks.push("No such track");
+				    }
+				})
+				.error(function(jqxhr, state, error) {
+				    console.log(error);
+				})
+				.always(function() {
+				    $("#music-search-box").removeClass("loading");
+				});
+			 }, 500);
+		  }
 	   });
+
+	   $("#music-search-submit").on("click", function(event) {
+		  var spotifyID = $("#music-search-box").val().trim();
+		  loadTrack(spotifyID);
+	   });
+    };
+
+    var loadTrack = function(spotifyID) {
+	   $("#song-wrapper").attr("src", "https://embed.spotify.com/?uri=spotify:track:" + spotifyID);
     };
 
     init();

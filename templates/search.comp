@@ -1,0 +1,8 @@
+<script id="search-item" type="text/x-handlebars-template">
+    <div class="search-track-item" data-id="{{id}}" data-artist="{{artist}}" data-name="{{name}}">
+	   <div class="search-track-artist">{{artist}}</div>
+	   <div class="search-track-name">{{name}}</div>
+	   <div class="search-track-album">{{album.name}}</div>
+    </div>
+</script>
+
