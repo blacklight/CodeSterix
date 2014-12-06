@@ -1,0 +1,39 @@
+<html>
+
+<head>
+	<title>Spotify Player</title>
+	<script language="javascript" type="text/javascript" src="static/js/app.js"></script>
+	<link rel="stylesheet" type="text/css" src="static/css/style.css">
+</head>
+
+<body>
+	<div class="jumbotron">
+	<h1>Play &lt;something&gt;</h1>
+	<h2>A way to interact with the Spotify Web API through voice</h2>
+	</div>
+	<div id="result" aria-live="polite">
+	    <p id="recognized"></p>
+	    <div id="matched"></div>
+	</div>
+
+	<div id="row">
+	    <div class="col-sm-6 col-md-6 col-lg-6">
+		   <h4>How to</h4>
+		   <ol>
+			  <li>Enable the microphone (you will see a notification on the top of this page)</li>
+			  <li>Say one of these commands:<ul>
+				 <li>Play &lt;a song name&gt; (e.g. Play "Wasted")</li>
+				 <li>Play &lt;a song name&gt; by &lt;an artist name&gt; (e.g. Play "Barbie Girl" by "Aqua")</li>
+				 </ul>
+			  </li>
+		   </ol>
+	    </div>
+	    <div class="col-sm-6 col-md-6 col-lg-6">
+		   <h4>More info</h4>
+		   Check out the source code for more information.
+		   This demo uses <a href="https://github.com/TalAter/annyang">annyang</a> and the <a href="https://developer.spotify.com/web-api/">Spotify Web API</a>.
+	    </div>
+	</div>    
+</body>
+</html>
+
