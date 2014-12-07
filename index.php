@@ -1,5 +1,4 @@
 <?php
-
 	$code = htmlspecialchars($_GET["code"]);
 	$state = htmlspecialchars($_GET["state"]);
 	$error = htmlspecialchars($_GET["error"]);
@@ -22,14 +21,7 @@
 	);
 	$context  = stream_context_create($options);
 	//$result = file_get_contents($url, false, $context);
-
-	var_dump($result);
-
 ?>
-
-
-
-
 
 <html>
 
@@ -53,6 +45,7 @@
     <?php
 	   include('templates/header.comp');
 	   include('templates/search.comp');
+	   include('templates/playlist.comp');
     ?>
 </head>
 
@@ -67,16 +60,7 @@
 			 </iframe>
 		  </div>
 		  <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-			 <div class="playlist-container">
-				<div class="playlist-item-row">
-				    <div class="playlist-item-artist">Led Zeppelin</div>
-				    <div class="playlist-item-title">Stairway to Heaven</div>
-				</div>
-				<div class="playlist-item-row">
-				    <div class="playlist-item-artist">Jimi Hendrix</div>
-				    <div class="playlist-item-title">Purple Haze</div>
-				</div>
-			 </div>
+			 <div id="playlist-container"></div>
 		  </div>
 	   </div>
 </body>

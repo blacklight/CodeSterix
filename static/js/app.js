@@ -1,20 +1,32 @@
 $(document).ready(function() {
+    var $musicSearchBox,
+	   $musicSearchSubmit;
+
     var searchItemTemplate = Handlebars.compile($("#search-item").html()),
-	   headerTemplate = Handlebars.compile($("#header-template").html());
+	   headerTemplate = Handlebars.compile($("#header-template").html()),
+	   emptyPlaylistTemplate = Handlebars.compile($("#empty-playlist-template").html()),
+	   playlistRowTemplate = Handlebars.compile($("#playlist-row-template").html());
 
     var init = function() {
-	   initHeader();
+	   initElements();
+	   cacheSelectors();
 	   initBindings();
     };
 
-    var initHeader = function() {
+    var cacheSelectors = function() {
+	   $musicSearchBox = $("#music-search-box");
+	   $musicSearchSubmit = $("#music-search-submit");
+    };
+
+    var initElements = function() {
 	   $("#header").html(headerTemplate);
+	   $("#playlist-container").html(emptyPlaylistTemplate);
     };
 
     var initBindings = function() {
 	   var pendingRequest;
 
-	   $("#music-search-box")
+	   $musicSearchBox
 	   .on("keypress", function(event) {
 		  if (event.which === 13) {
 			 var spotifyID = $(this).val().trim();
@@ -27,13 +39,20 @@ $(document).ready(function() {
 		  select: function(event, ui) {
 			 var $item = $(ui.item.value);
 			 if ($item.length && $item.data("id")) {
+				var track = {
+				    id     : $item.data("id"),
+				    artist : $item.data("artist"),
+				    name   : $item.data("name"),
+				};
+
 				setTimeout(function() {
-				    $("#music-search-box").val($item.data("artist") + " - " + $item.data("name"));
-				    loadTrack($item.data("id"));
+				    $musicSearchBox.val(track.artist + " - " + track.name);
+				    appendToPlaylist(track);
+				    loadTrack(track.id);
 				}, 10)
 			 } else {
 				setTimeout(function() {
-				    $("#music-search-box").val("");
+				    $musicSearchBox.val("");
 				}, 10)
 			 }
 		  },
@@ -43,7 +62,7 @@ $(document).ready(function() {
 		  },
 
 		  source: function(request, response) {
-			 $("#music-search-box").addClass("loading");
+			 $musicSearchBox.addClass("loading");
 			 if (pendingRequest) {
 				clearTimeout(pendingRequest);
 			 }
@@ -56,9 +75,13 @@ $(document).ready(function() {
 				    }
 				)
 				.success(function(data) {
-				    if (data.tracks.items) {
-					   var tracks = [];
+				    var tracks = [];
+				    if (data.tracks.items && data.tracks.items.length) {
 					   data.tracks.items.forEach(function(item) {
+						  if (tracks.length > 10) {
+							 return;
+						  }
+
 						  item.artist = "";
 						  item.artists.forEach(function(artist) {
 							 if (item.artist.length > 0) {
@@ -67,32 +90,53 @@ $(document).ready(function() {
 							 item.artist += artist.name;
 						  });
 
+						  if (item.album && item.album.images.length) {
+							 item.albumImg = item.album.images[item.album.images.length-1].url;
+						  }
+
+						  item.displayName = item.name.length > 30
+							 ? item.name.substr(0, 30) + " ..."
+							 : item.name;
+
+						  item.displayArtist = item.artist.length > 30
+							 ? item.artist.substr(0, 30) + " ..."
+							 : item.artist;
+
+						  item.album.displayName = item.album.name.length > 30
+							 ? item.album.name.substr(0, 30) + " ..."
+							 : item.album.name;
+
 						  tracks.push(searchItemTemplate(item));
 					   });
-
-					   response(tracks);
 				    } else {
 					   tracks.push("No such track");
 				    }
+
+				    response(tracks);
 				})
 				.error(function(jqxhr, state, error) {
 				    console.log(error);
 				})
 				.always(function() {
-				    $("#music-search-box").removeClass("loading");
+				    $musicSearchBox.removeClass("loading");
 				});
 			 }, 500);
 		  }
 	   });
 
-	   $("#music-search-submit").on("click", function(event) {
-		  var spotifyID = $("#music-search-box").val().trim();
+	   $musicSearchSubmit.on("click", function(event) {
+		  var spotifyID = $musicSearchBox.val().trim();
 		  loadTrack(spotifyID);
 	   });
     };
 
     var loadTrack = function(spotifyID) {
 	   $("#song-wrapper").attr("src", "https://embed.spotify.com/?uri=spotify:track:" + spotifyID);
+    };
+
+    var appendToPlaylist = function(track) {
+	   $(".empty-playlist").remove();
+	   $("#playlist-container").append(playlistRowTemplate(track));
     };
 
     init();

@@ -1,8 +1,38 @@
 <script id="search-item" type="text/x-handlebars-template">
-    <div class="search-track-item" data-id="{{id}}" data-artist="{{artist}}" data-name="{{name}}">
-	   <div class="search-track-artist">{{artist}}</div>
-	   <div class="search-track-name">{{name}}</div>
-	   <div class="search-track-album">{{album.name}}</div>
-    </div>
+    <table class="search-track-item" data-id="{{id}}" data-artist="{{artist}}" data-name="{{name}}">
+	   <tr>
+		  <td>
+			 <span class="search-track-album-img"><img src="{{albumImg}}" class="search-track-album-img"></span>
+		  </td>
+		  <td class="search-track-description">
+			 <table class="search-track-item">
+				<tr>
+				    <td class="search-track-field">
+					   <span class="search-track-field">Artist</span>
+				    </td>
+				    <td class="search-track-description">
+					   <span class="search-track-artist">{{displayArtist}}</span><br/>
+				    </td>
+				</tr>
+				<tr>
+				    <td class="search-track-field">
+					   <span class="search-track-field">Name</span>
+				    </td>
+				    <td class="search-track-description">
+					   <span class="search-track-name">{{displayName}}</span><br/>
+				    </td>
+				</tr>
+				<tr>
+				    <td class="search-track-field">
+					   <span class="search-track-field">Album</span>
+				    </td>
+				    <td class="search-track-description">
+					   <span class="search-track-album">{{album.displayName}}</div>
+				    </td>
+				</tr>
+			 </table>
+		  </td>
+	   </tr>
+    </table>
 </script>
 

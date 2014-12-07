@@ -9,3 +9,31 @@
     opacity: 0.7;
 }
 
+.search-track-album-img {
+    width: 40px;
+    height: 40px;
+}
+
+table.search-track-item {
+    background: transparent !important;
+    color: #000 !important;
+}
+
+td.search-track-field {
+    padding-left: 10px;
+}
+
+span.search-track-field {
+    color: #787e95;
+    font-weight: bold;
+}
+
+.ui-autocomplete {
+    max-width: 600px;
+    overflow-y: auto;
+}
+
+.search-track-description {
+    padding-left: 20px;
+}
+

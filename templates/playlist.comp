@@ -1,0 +1,12 @@
+<script id="playlist-row-template" type="text/x-handlebars-template">
+    <div class="playlist-item-row">
+	   <div class="playlist-item-artist">{{artist}}</div>
+	   <div class="playlist-item-name">{{name}}</div>
+	   <div class="playlist-item-album">{{album}}</div>
+    </div>
+</script>
+
+<script id="empty-playlist-template" type="text/x-handlebars-template">
+    <div class="empty-playlist">No items in the current playlist</div>
+</script>
+
