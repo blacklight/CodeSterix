@@ -3,7 +3,6 @@
 	$state = htmlspecialchars($_GET["state"]);
 	$error = htmlspecialchars($_GET["error"]);
 	
-	echo "Code = $code, state = $state, error = $error";
 	if(error == NULL){
 		echo "\nLoggedin successfully";
 	}
