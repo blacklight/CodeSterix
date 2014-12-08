@@ -33,6 +33,8 @@ body {
 .main-panel-center {
     border-left: 1px solid rgba(90,90,90,0.2);
     border-right: 1px solid rgba(90,90,90,0.2);
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .main-panel-right {
@@ -101,7 +103,6 @@ span.search-track-field {
 
 #playlist-container {
     height: 100%;
-    padding-left: 5px !important;
 }
 
 .playlist-item-row {
@@ -134,6 +135,7 @@ span.search-track-field {
 
 .empty-playlist {
     font-size: 18px;
+    padding-left: 10px;
 }
 
 .playlist-play-hover {
