@@ -35,6 +35,7 @@
     var initElements = function() {
 	   $("#header").html(headerTemplate);
 	   $("#playlist-container").html(emptyPlaylistTemplate);
+	   $(".empty-playlist").css("margin-top", (parseInt($("#playlist-container").height()/2) - 60) + "px");
 	   $("#player").player({
 		  width: "100%",
 		  video: 'AlaRjP8pg0Q',

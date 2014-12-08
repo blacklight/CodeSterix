@@ -43,6 +43,15 @@ body {
 }
 
 /***********
+ * Player  *
+ ***********/
+
+#player {
+    padding-left: 20px;
+    padding-right: 3px;
+}
+
+/***********
  * Search  *
  ***********/
 
@@ -135,7 +144,7 @@ span.search-track-field {
 
 .empty-playlist {
     font-size: 18px;
-    padding-left: 10px;
+    text-align: center;
 }
 
 .playlist-play-hover {
