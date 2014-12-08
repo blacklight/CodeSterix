@@ -31,6 +31,7 @@
     <script language="javascript" type="text/javascript" src="static/js/lib/jquery-2.1.1.min.js"></script>
     <script language="javascript" type="text/javascript" src="static/js/lib/jquery-ui.min.js"></script>
     <script language="javascript" type="text/javascript" src="static/js/lib/jquery.ui.autocomplete.html.js"></script>
+    <script language="javascript" type="text/javascript" src="static/js/lib/jquery.tube.js"></script>
     <script language="javascript" type="text/javascript" src="static/js/lib/bootstrap.min.js"></script>
     <script language="javascript" type="text/javascript" src="static/js/lib/handlebars-v2.0.0.js"></script>
     <script language="javascript" type="text/javascript" src="static/js/app.js"></script>
@@ -51,17 +52,17 @@
 <body>
     <div id="header"></div>
     <div class="row">
-	   <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
-		  <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-			 <iframe src="https://embed.spotify.com/?uri=spotify:track:4th1RQAelzqgY7wL53UGQt"
-				id="song-wrapper" width="100%" height="100%"
-				frameborder="0" allowtransparency="true">
-			 </iframe>
-		  </div>
-		  <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-			 <div id="playlist-container"></div>
-		  </div>
+	   <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 main-panel main-panel-center">
+		  <div id="player"></div>
+		  <input type="hidden" id="current-video-id">
 	   </div>
+	   <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 main-panel main-panel-center">
+		  <div id="playlist-container"></div>
+	   </div>
+	   <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 main-panel main-panel-right">
+		  <div id="users-container"></div>
+	   </div>
+    </div>
 </body>
 </html>
 

@@ -1,3 +1,12 @@
+/***********
+ * General *
+ ***********/
+
+body {
+    overflow: hidden;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif
+}
+
 #result {
     text-align: center;
     font-size: 2em;
@@ -9,14 +18,39 @@
     opacity: 0.7;
 }
 
+.navbar {
+    margin-bottom: 0;
+}
+
+.main-panel {
+    padding-top: 15px;
+}
+
+.main-panel-left {
+    padding-right: 5px !important;
+}
+
+.main-panel-center {
+    border-left: 1px solid rgba(90,90,90,0.2);
+    border-right: 1px solid rgba(90,90,90,0.2);
+}
+
+.main-panel-right {
+    background-color: #171b20;
+    height: 100%;
+}
+
+/***********
+ * Search  *
+ ***********/
+
 .search-track-album-img {
     width: 40px;
     height: 40px;
 }
 
-table.search-track-item {
+.search-track-item-right {
     background: transparent !important;
-    color: #000 !important;
 }
 
 td.search-track-field {
@@ -33,7 +67,93 @@ span.search-track-field {
     overflow-y: auto;
 }
 
-.search-track-description {
-    padding-left: 20px;
+.search-track-item {
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    width: 100%;
+    background: transparent !important;
 }
+
+.search-track-image {
+    height: 60px;
+}
+
+.search-track-text {
+    padding-left: 10px;
+}
+
+.search-track-text-name {
+    color: #484848;
+    font-size: 14px;
+}
+
+.search-track-text-description {
+    color: #7898a8;
+    font-size: 13px;
+}
+
+.search-track-spacer {
+    height: 5px;
+}
+
+/************
+ * Playlist *
+ ************/
+
+#playlist-container {
+    height: 100%;
+    padding-left: 5px !important;
+}
+
+.playlist-item-row {
+    height: 60px;
+    background-color: #2e3338;
+    margin-bottom: 2px;
+}
+
+.playlist-item-row-hover {
+    background-color: #21252D;
+    cursor: pointer;
+}
+
+.playlist-item-image {
+    height: 60px;
+}
+
+.playlist-item-row-right {
+    padding-left: 10px;
+}
+
+.playlist-item-name {
+    color: #989898;
+    font-size: 14px;
+}
+
+.playlist-item-description {
+    font-size: 13px;
+}
+
+.empty-playlist {
+    font-size: 18px;
+}
+
+.playlist-play-hover {
+    display: table;
+    float: left;
+    z-index: 3;
+    opacity: 0.7;
+    height: 60px;
+    background-color: #000;
+    position: absolute;
+    font-size: 40px;
+    text-align: center;
+}
+
+.playlist-play-hover-icon {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+/************
+ * Users *
+ ************/
 

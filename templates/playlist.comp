@@ -1,8 +1,27 @@
 <script id="playlist-row-template" type="text/x-handlebars-template">
-    <div class="playlist-item-row">
-	   <div class="playlist-item-artist">{{artist}}</div>
-	   <div class="playlist-item-name">{{name}}</div>
-	   <div class="playlist-item-album">{{album}}</div>
+    <div class="playlist-item-row" data-id="{{id}}">
+	   <table class="playlist-item-row-table">
+		  <tr>
+			 <td>
+				<span class="playlist-play-hover hidden"><i class="glyphicon glyphicon-play playlist-play-hover-icon"></i></span>
+				<img src="{{image}}" class="playlist-item-image">
+			 </td>
+			 <td class="playlist-item-row-right">
+				<table class="playlist-item-row-table">
+				    <tr>
+					   <td>
+						  <div class="playlist-item-name">{{displayName}}</div>
+					   </td>
+				    </tr>
+				    <tr>
+					   <td>
+						  <div class="playlist-item-description">{{displayDescription}}</div>
+					   </td>
+				    </tr>
+				</table>
+			 </td>
+		  </tr>
+	   </table>
     </div>
 </script>
 
