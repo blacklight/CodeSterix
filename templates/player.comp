@@ -1,0 +1,4 @@
+<script id="player-loading-template" type="text/x-handlebars-template">
+    <div class="player-loading">Loading the player<div>
+</script>
+
