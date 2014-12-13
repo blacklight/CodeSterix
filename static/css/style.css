@@ -47,7 +47,21 @@ body {
  ***********/
 
 #player {
-    padding-left: 16px;
+    padding-left: 26px;
+    padding-right: 10px;
+}
+
+#player-no-video {
+    background-image: url("../img/white_noise.gif");
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 400px;
+}
+
+#player-loading-video {
+    font-size: 18px;
+    text-align: center;
 }
 
 /***********
@@ -111,6 +125,7 @@ span.search-track-field {
 
 #playlist-container {
     height: 100%;
+    padding: 10px;
 }
 
 .playlist-item-row {

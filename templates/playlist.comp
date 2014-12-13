@@ -1,5 +1,5 @@
 <script id="playlist-row-template" type="text/x-handlebars-template">
-    <div class="playlist-item-row" data-id="{{id}}">
+    <div class="playlist-item-row" data-id="{{id}}" data-position="{{position}}">
 	   <table class="playlist-item-row-table">
 		  <tr>
 			 <td>
@@ -10,12 +10,14 @@
 				<table class="playlist-item-row-table">
 				    <tr>
 					   <td>
-						  <div class="playlist-item-name">{{displayName}}</div>
+						  <div class="playlist-item-name">{{name}}</div>
+						  <!--<div class="playlist-item-name">{{displayName}}</div>-->
 					   </td>
 				    </tr>
 				    <tr>
 					   <td>
-						  <div class="playlist-item-description">{{displayDescription}}</div>
+						  <div class="playlist-item-description">{{description}}</div>
+						  <!--<div class="playlist-item-description">{{displayDescription}}</div>-->
 					   </td>
 				    </tr>
 				</table>
@@ -26,6 +28,6 @@
 </script>
 
 <script id="empty-playlist-template" type="text/x-handlebars-template">
-    <div class="empty-playlist">No items in the current playlist</div>
+    <div class="empty-playlist">No items in the current video room</div>
 </script>
 

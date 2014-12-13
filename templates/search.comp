@@ -2,9 +2,7 @@
     <table class="search-track-item"
 	   data-id="{{id}}"
 	   data-name="{{name}}"
-	   data-display-name="{{displayName}}"
 	   data-description="{{description}}"
-	   data-display-description="{{displayDescription}}"
 	   data-image-url="{{image}}"
     >
 	   <tr>
@@ -14,10 +12,10 @@
 		  <td class="search-track-description">
 			 <table class="search-track-item-right">
 				<tr>
-				    <td class="search-track-text search-track-text-name">{{displayName}}</td>
+				    <td class="search-track-text search-track-text-name">{{name}}</td>
 				</tr>
 				<tr>
-				    <td class="search-track-text search-track-text-description">{{displayDescription}}</td>
+				    <td class="search-track-text search-track-text-description">{{description}}</td>
 				</tr>
 			 </table>
 		  </td>

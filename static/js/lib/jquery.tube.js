@@ -770,10 +770,7 @@
     if (!player) {
       player = new Player(options);
       dom.data('player', player);
-
-	 if (player.options && player.options.ready) {
-		player.options.ready(player);
-	 }
+	 $("#" + options.id + "-tube").data("player", player);
     }
   
     return player;
@@ -813,7 +810,7 @@
   
   Player.semaphore = 0;
   
-  Player.events = ['unstarted', 'end', 'play', 'cue', 'buffer', 'pause', 'error'];
+  Player.events = ['unstarted', 'end', 'play', 'cue', 'buffer', 'pause', 'error', 'ready'];
   
   /** Private Methods */
   
