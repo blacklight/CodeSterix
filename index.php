@@ -10,6 +10,8 @@
     <link rel="stylesheet" type="text/css" href="static/css/jquery-ui.min.css">
     <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="static/css/style.css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 
     <!-- Templates -->
     <?php
