@@ -18,11 +18,13 @@ define([
 ], function($, Handlebars, Player, Playlist, Search) {
     "use strict";
 
-    var headerTemplate,
+    var userinfo = {},
+	   headerTemplate,
 	   emptyPlaylistTemplate,
 	   playerLoadingTemplate;
 
     var init = function() {
+	   initUserInfo();
 	   initTemplates();
 	   initElements();
 	   initBindings();
@@ -35,13 +37,19 @@ define([
     };
 
     var initElements = function() {
-	   $("#header").html(headerTemplate);
+	   $("#header").html(headerTemplate(userinfo));
 	   $("#playlist-container").html(emptyPlaylistTemplate);
 	   $("#player-loading-video").html(playerLoadingTemplate);
+    };
 
-	   setTimeout(function() {
-		  $(".empty-playlist").css("margin-top", (parseInt($("#playlist-container").height()/2) - 60) + "px");
-	   }, 10);
+    var initUserInfo = function() {
+	   userinfo = {
+		  id        : $("#user_id").val(),
+		  name      : $("#user_name").val(),
+		  givenName : $("#user_given_name").val(),
+		  email     : $("#user_email").val(),
+		  picture   : $("#user_picture").val(),
+	   };
     };
 
     var initBindings = function() {
@@ -62,6 +70,14 @@ define([
 
 	   $("body").on("click", ".playlist-item-row", function() {
 		  Player.loadVideoById($(this).data("id"));
+	   });
+
+	   $("body").on("click", ".logout", function() {
+		  gapi.auth.signOut();
+		  $.getJSON("logout.php")
+			 .success(function() {
+				window.location = "login.php";
+			 });
 	   });
     };
 

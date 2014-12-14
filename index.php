@@ -1,9 +1,17 @@
+<?php
+
+require_once "db.php";
+require_once "auth.php";
+
+?>
+
 <html>
 
 <head>
     <title>T&oacute;nlist</title>
 
     <!-- JS -->
+    <script src="https://apis.google.com/js/client:platform.js" async defer></script>
     <script language="javascript" type="text/javascript" src="static/js/require.js" data-main="static/js/app"></script>
 
     <!-- CSS -->

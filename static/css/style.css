@@ -42,6 +42,52 @@ body {
     height: 100%;
 }
 
+/**********
+ * Header *
+ **********/
+
+.user-pic-header {
+    width: 20px;
+    margin-right: 10px;
+}
+
+/**********
+ * Login  *
+ **********/
+
+#loginForm {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: white;
+    width: 500px;
+    height: 250px;
+    margin: -300px 0 0 -250px;
+    text-align: center;
+    padding: 20px;
+    border-radius: 7px;
+    border: 1px solid #888;
+}
+
+.loginLogo {
+    background-image: url("../img/logo.png");
+    background-repeat: no-repeat;
+    width: 80px;
+    height: 80px;
+    text-align: center;
+    margin: auto auto 0 auto;
+}
+
+.bigName {
+    font-size: 20px;
+    color: #454545;
+}
+
+.bigDescription {
+    color: #a0a0a0;
+    margin-bottom: 25px;
+}
+
 /***********
  * Player  *
  ***********/
@@ -158,7 +204,9 @@ span.search-track-field {
 
 .empty-playlist {
     font-size: 18px;
-    text-align: center;
+    position: absolute;
+    top: 40%;
+    left: 25%;
 }
 
 .playlist-play-hover {

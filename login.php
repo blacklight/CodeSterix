@@ -1,19 +1,55 @@
 <?php
 
-require_once "google-api-php-client/autoload.php";
+require_once "db.php";
+require_once "auth.php";
 
-const CLIENT_ID = "984540381166-u3bv62sb6ggppljn77dsue93m9b4fl3j.apps.googleusercontent.com";
-const CLIENT_SECRET = "iBpvjqJK1YHZDP4qNzMtnqwF";
-const REDIRECT_URI = "http://blacklight.gotdns.org/CodeSterix/oauth2.php";
+if (isset($_GET["code"])) {
+    $client->authenticate($_GET["code"]);
+    $_SESSION["access_token"] = $client->getAccessToken();
+}
 
-$client = new Google_Client();
-$client->setClientId(CLIENT_ID);
-$client->setClientSecret(CLIENT_SECRET);
-$client->setRedirectUri(REDIRECT_URI);
-$client->setScopes("https://www.googleapis.com/auth/plus.login");
-
-$authUrl = $client->createAuthUrl();
-var_dump($authUrl);
+if (isset($user) && $user) {
+    $redirect = 'http://' . $_SERVER['HTTP_HOST'] . "/" . TONLIST_URI . "/index.php";
+    header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
+}
 
 ?>
 
+<html>
+    <head>
+	   <!-- JS -->
+	   <script src="https://apis.google.com/js/client:platform.js" async defer></script>
+	   <script language="javascript" type="text/javascript" src="static/js/jquery.js"></script>
+	   <script language="javascript" type="text/javascript" src="static/js/login.js"></script>
+	   <script language="javascript" type="text/javascript" src="static/js/lib/bootstrap.js"></script>
+
+	   <!-- CSS -->
+	   <link rel="stylesheet" type="text/css" href="static/css/jquery-ui.min.css">
+	   <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
+	   <link rel="stylesheet" type="text/css" href="static/css/style.css">
+	   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	   <link rel="icon" href="favicon.ico" type="image/x-icon">
+    </head>
+
+    <body>
+	   <div id="loginForm">
+		  <div class="loginLogo"></div>
+		  <div class="bigName">T&oacute;nlist</div>
+		  <div class="bigDescription">Interactively watch your favourite videos with your friends</div>
+		  <span id="signinButton">
+			 <span
+				class="g-signin"
+				data-callback="signinCallback"
+				data-clientid="<?php echo CLIENT_ID ?>"
+				data-cookiepolicy="single_host_origin"
+				data-requestvisibleactions="http://schema.org/AddAction"
+				data-scope="https://www.googleapis.com/auth/plus.login"
+				data-scope="https://www.googleapis.com/auth/plus.me"
+				data-scope="https://www.googleapis.com/auth/userinfo.email"
+				data-scope="https://www.googleapis.com/auth/userinfo.profile"
+			 >
+			 </span>
+		  </span>
+	   </div>
+    </body>
+</html>
