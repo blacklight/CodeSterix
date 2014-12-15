@@ -32,7 +32,7 @@ if (isset($_SESSION["user"])) {
     $user = $_SESSION["user"];
 }
 
-if (isset($_SESSION["access_token"])) {
+if ((!isset($user) || !$user) && isset($_SESSION["access_token"])) {
     $token = $_SESSION["access_token"];
 
     $params = array(
@@ -58,7 +58,7 @@ if (isset($_SESSION["access_token"])) {
     }
 }
 
-if (isset($user)) {
+if (isset($user) && $user) {
 ?>
 
     <input type="hidden" id="user_id" value="<?php echo $user->id ?>">
@@ -71,6 +71,5 @@ if (isset($user)) {
 <?php
 } else if (!preg_match("#" . LOGIN_URI . "$#", $_SERVER["PHP_SELF"])) {
     header("Location: " . LOGIN_URI);
-    setcookie("has_login_redirect", 1);
 }
 ?>

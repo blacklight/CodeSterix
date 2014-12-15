@@ -39,11 +39,11 @@ class Db extends PDO {
 
     public function create_user($user) {
 	   $this->query("INSERT INTO tonlist_user(google_id, email, name, given_name, picture) VALUES(?, ?, ?, ?, ?)",
-		  $user->google_id,
-		  $user->email,
-		  $user->name,
-		  $user->given_name,
-		  $user->picture
+		  isset($user->google_id) ? $user->google_id : null,
+		  isset($user->email) ? $user->email : null,
+		  isset($user->name) ? $user->name : null,
+		  isset($user->given_name) ? $user->given_name : null,
+		  isset($user->picture) ? $user->picture : null
 	   );
     }
 }
