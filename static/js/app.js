@@ -74,7 +74,7 @@ define([
 
 	   $("body").on("click", ".logout", function() {
 		  gapi.auth.signOut();
-		  $.getJSON("logout.php")
+		  $.getJSON("json/logout.php")
 			 .success(function() {
 				window.location = "login.php";
 			 });
