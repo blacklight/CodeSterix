@@ -99,7 +99,7 @@ define("search", [
 		  result = data;
 	   });
 
-        $.ajaxSetup({ async: false });
+        $.ajaxSetup({ async: true });
         return result;
     };
 
