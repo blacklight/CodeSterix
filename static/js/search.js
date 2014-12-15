@@ -90,6 +90,19 @@ define("search", [
 	   }, 500);
     };
 
+    var getVideoById = function(videoID) {
+        var result = undefined;
+        $.ajaxSetup({ async: false });
+
+	   $.get("json/youtube_search.php", { id: videoID })
+	   .success(function(data) {
+		  result = data;
+	   });
+
+        $.ajaxSetup({ async: false });
+        return result;
+    };
+
     var getArguments = function() {
 	   return {
 		  minLength: 4,
@@ -103,7 +116,8 @@ define("search", [
     };
 
     return {
-	   getArguments: getArguments,
+	   getArguments : getArguments,
+        getVideoById : getVideoById,
     };
 });
 
