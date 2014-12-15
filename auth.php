@@ -1,6 +1,8 @@
 <?php
 
+require_once "conf.php";
 require_once "google-api-php-client/autoload.php";
+
 session_start();
 
 if (isset($_COOKIE["access_token"]) && !isset($_SESSION["access_token"])) {
@@ -10,12 +12,6 @@ if (isset($_COOKIE["access_token"]) && !isset($_SESSION["access_token"])) {
 if (isset($_SESSION["access_token"]) && !isset($_COOKIE["access_token"])) {
     setcookie("access_token", $_SESSION["access_token"], time() + 60*60*24*365);
 }
-
-const TONLIST_URI = "/CodeSterix";
-const CLIENT_ID = "984540381166-u3bv62sb6ggppljn77dsue93m9b4fl3j.apps.googleusercontent.com";
-const CLIENT_SECRET = "iBpvjqJK1YHZDP4qNzMtnqwF";
-const LOGIN_URI = TONLIST_URI . "/login.php";
-const REDIRECT_URI = "http://localhost/" . TONLIST_URI . "/login.php";
 
 $client = new Google_Client();
 $client->setClientId(CLIENT_ID);

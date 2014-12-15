@@ -1,19 +1,15 @@
 <?php
 
-class Db extends PDO {
-    const DB_HOST = "localhost";
-    const DB_PORT = 3306;
-    const DB_USER = "root";
-    const DB_PASS = "";
-    const DB_NAME = "tonlist";
+require_once "conf.php";
 
+class Db extends PDO {
     public function __construct($options=null) {
 	   parent::__construct(
-		  'mysql:host=' .Db::DB_HOST .
-		  ';port=' .Db::DB_PORT .
-		  ';dbname=' . Db::DB_NAME,
-		  Db::DB_USER,
-		  Db::DB_PASS,
+		  'mysql:host=' . DB_HOST .
+		  ';port=' . DB_PORT .
+		  ';dbname=' . DB_NAME,
+		  DB_USER,
+		  DB_PASS,
 		  $options);
     }
 
