@@ -43,10 +43,7 @@ if (isset($user) && $user) {
 				data-clientid="<?php echo CLIENT_ID ?>"
 				data-cookiepolicy="single_host_origin"
 				data-requestvisibleactions="http://schema.org/AddAction"
-				data-scope="https://www.googleapis.com/auth/plus.login"
-				data-scope="https://www.googleapis.com/auth/plus.me"
-				data-scope="https://www.googleapis.com/auth/userinfo.email"
-				data-scope="https://www.googleapis.com/auth/userinfo.profile"
+				data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile email"
 			 >
 			 </span>
 		  </span>

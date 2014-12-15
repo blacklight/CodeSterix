@@ -13,17 +13,6 @@ if (isset($_SESSION["access_token"]) && !isset($_COOKIE["access_token"])) {
     setcookie("access_token", $_SESSION["access_token"], time() + 60*60*24*365);
 }
 
-$client = new Google_Client();
-$client->setClientId(CLIENT_ID);
-$client->setClientSecret(CLIENT_SECRET);
-$client->setRedirectUri(REDIRECT_URI);
-$client->setScopes(array(
-    "https://www.googleapis.com/auth/plus.login",
-    "https://www.googleapis.com/auth/plus.me",
-    "https://www.googleapis.com/auth/userinfo.email",
-    "https://www.googleapis.com/auth/userinfo.profile"
-));
-
 if (isset($_SESSION["user"])) {
     $user = $_SESSION["user"];
 }
