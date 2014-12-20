@@ -1,6 +1,6 @@
 <?php
 
-require_once "db.php";
+require_once "conf.php";
 require_once "auth.php";
 
 if (isset($_GET["code"])) {
