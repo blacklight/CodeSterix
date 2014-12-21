@@ -131,4 +131,6 @@ class Db extends PDO {
     }
 }
 
+$_DB = array();
+
 ?>

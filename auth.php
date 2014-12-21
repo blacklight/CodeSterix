@@ -2,6 +2,7 @@
 
 require_once "conf.php";
 require_once "lib/db/db_user.php";
+require_once "lib/db/db_session.php";
 require_once "google-api-php-client/autoload.php";
 
 session_start();
@@ -29,9 +30,8 @@ if ((!isset($user) || !$user) && isset($_SESSION["access_token"])) {
     $userinfo = file_get_contents("https://www.googleapis.com/oauth2/v2/userinfo?" . http_build_query($params));
 
     if ($userinfo) {
-	   $db_user = new DbUser();
 	   $userinfo = json_decode($userinfo);
-	   $user = $db_user->search_where(array(
+	   $user = $_DB["user"]->search_where(array(
 		  "google_id" => $userinfo->id
 	   ));
 
@@ -40,7 +40,7 @@ if ((!isset($user) || !$user) && isset($_SESSION["access_token"])) {
 	   }
 
 	   if (!$user) {
-		  $user = $db_user->insert(array(
+		  $user = $_DB["user"]->insert(array(
 			 "google_id"  => $userinfo->id,
 			 "email"      => $userinfo->email,
 			 "name"       => $userinfo->name,
@@ -57,6 +57,11 @@ if ((!isset($user) || !$user) && isset($_SESSION["access_token"])) {
 }
 
 if (isset($user) && $user) {
+    $_DB["user_session"]->store_session(array(
+	   "session_id"   => $_COOKIE["PHPSESSID"],
+	   "access_token" => $_COOKIE["access_token"],
+	   "user_id"      => $user->id,
+    ));
 ?>
 
     <input type="hidden" id="user_id" value="<?php echo $user->id ?>">

@@ -16,4 +16,6 @@ class DbUser extends Db {
     protected $primary_key = "id";
 }
 
+$_DB["user"] = new DbUser();
+
 ?>

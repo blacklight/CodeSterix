@@ -13,13 +13,15 @@ define([
     "player",
     "playlist",
     "search",
+    "websocket_client",
     "lib/bootstrap",
     "lib/jquery.ui.autocomplete.html",
-], function($, Handlebars, Player, Playlist, Search) {
+], function($, Handlebars, Player, Playlist, Search, WebSocketClient) {
     "use strict";
 
     var userinfo = {},
 	   headerTemplate,
+	   webSocketClient,
 	   emptyPlaylistTemplate,
 	   playerLoadingTemplate;
 
@@ -28,6 +30,7 @@ define([
 	   initTemplates();
 	   initElements();
 	   initBindings();
+	   initWebSocketClient();
     };
 
     var initTemplates = function() {
@@ -79,6 +82,10 @@ define([
 				window.location = "login.php";
 			 });
 	   });
+    };
+
+    var initWebSocketClient = function() {
+	   WebSocketClient.initialize();
     };
 
     $(document).ready(init);
