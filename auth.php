@@ -3,7 +3,6 @@
 require_once "conf.php";
 require_once "lib/db/db_user.php";
 require_once "lib/db/db_session.php";
-require_once "google-api-php-client/autoload.php";
 
 session_start();
 
