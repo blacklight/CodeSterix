@@ -92,6 +92,10 @@ define([
 	   initBindings();
 	   $.getJSON("json/get_active_public_rooms.php")
 		  .success(function(rooms) {
+			 rooms.forEach(function(room) {
+				room.online_users = room.users.length + " online users";
+			 });
+
 			 $("#rooms-modal-container").html(roomsModalTemplate({ rooms : rooms }));
 
 			 if (!args["room_id"]) {

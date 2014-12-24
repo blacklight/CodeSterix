@@ -21,11 +21,14 @@
 				    {{#each rooms}}
 					   <li class="room-row" data-room-id="{{id}}">
 						  <span class="room-row-img" style=
-							 "background: url('{{creator/picture}}'); background-size: 30px">
+							 "background: url('{{creator/picture}}'); background-size: 40px">
 						  </span>
 						  <div class="room-row-right">
 							 <span class="room-row-name">
 								{{name}}
+							 </span>
+							 <span class="room-row-online-users">
+								{{online_users}}
 							 </span>
 							 <span class="room-row-details">
 								Created
