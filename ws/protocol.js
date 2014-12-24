@@ -11,6 +11,8 @@ exports.MessageTypes = {
     HANDSHAKE_RESPONSE : "Handshake response",
     HEARTBEAT_REQUEST  : "Heartbeat request",
     HEARTBEAT_RESPONSE : "Heartbeat response",
+    ROOM_REGISTRATION  : "Room registration",
+    CONNECTION_CLOSE   : "Connection close",
     HANDSHAKE_ERROR    : "Error",
     SESSION_ERROR      : "Session error",
     HTTP_ERROR         : "HTTP error",
@@ -18,7 +20,7 @@ exports.MessageTypes = {
 
 exports.HeartBeatTimeout = 2000;
 exports.HeartBeatInterval = 2000;
-exports.MaxSocketID = Math.pow(2, 31);
+exports.MaxSocketID = Math.pow(2, 31) - 1;
 
 if (clientSide) {
     define("protocol", [], function() {

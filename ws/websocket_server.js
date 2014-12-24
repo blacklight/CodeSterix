@@ -23,6 +23,7 @@
 	   this.port = Config.webSocketListenPort;
 	   this.clients = [];
 	   this.clientsMap = {};
+	   this.rooms = {};
 	   this.heartBeatInterval = Protocol.HeartBeatInterval;
 	   this.heartBeatTimeout = Protocol.HeartBeatTimeout;
 
@@ -43,8 +44,11 @@
 		  ws.msgHandlers = {};
 		  Object.keys(Protocol.MessageTypes).forEach(function(msgType) {
 			 ws.msgHandlers[Protocol.MessageTypes[msgType]] = [];
+
 			 if (msgType === "HANDSHAKE_REQUEST") {
 				ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onHandshakeRequest);
+			 } else if (msgType === "ROOM_REGISTRATION") {
+				ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onRoomRegistration);
 			 }
 		  });
 	   };
@@ -61,26 +65,78 @@
 	   var heartBeatLoop = function() {
 		  for (var i=0; i < self.clients.length; ++i) {
 			 var responseTimeout = setTimeout(function(i) {
-				logger.info(JSON.stringify({
-				    socketID : self.clients[i].socketID,
-				    messageType : Protocol.MessageTypes.HEARTBEAT_REQUEST,
-				    result : "Request timed out",
-				}));
+				if (self.clients[i].socketID) {
+				    logger.info(JSON.stringify({
+					   socketID : self.clients[i].socketID,
+					   messageType : Protocol.MessageTypes.HEARTBEAT_REQUEST,
+					   result : "Request timed out",
+				    }));
 
-				delete self.clientsMap[self.clients[i].socketID];
+				    onClose(self.clients[i]);
+				}
+
 				self.clients.splice(i, 1);
 			 }, self.heartBeatTimeout, i);
 
-			 sendMessage(self.clients[i], {
-				msgType : Protocol.MessageTypes.HEARTBEAT_REQUEST,
-				error   : false,
-				payload : {},
-			 });
+			 if (self.clients[i].socketID) {
+				sendMessage(self.clients[i], {
+				    msgType : Protocol.MessageTypes.HEARTBEAT_REQUEST,
+				    payload : {},
+				});
 
-			 self.clients[i].msgHandlers[Protocol.MessageTypes.HEARTBEAT_RESPONSE].push(function(ws, message) {
-				clearTimeout(responseTimeout);
-				ws.msgHandlers[Protocol.MessageTypes.HEARTBEAT_RESPONSE].pop();
-			 });
+				self.clients[i].msgHandlers[Protocol.MessageTypes.HEARTBEAT_RESPONSE].push(function(ws, message) {
+				    clearTimeout(responseTimeout);
+				    ws.msgHandlers[Protocol.MessageTypes.HEARTBEAT_RESPONSE].pop();
+				});
+			 }
+		  }
+	   };
+
+	   var onClose = function(ws) {
+		  logger.info(JSON.stringify({
+			 remoteAddress : ws._socket ? ws._socket.remoteAddress : undefined,
+			 remotePort : ws._socket ? ws._socket.remotePort : undefined,
+			 socketID : ws.socketID || undefined,
+			 messageType : Protocol.MessageTypes.CONNECTION_CLOSE,
+		  }));
+
+		  if (ws.socketID) {
+			 if (ws.roomID) {
+				delete self.rooms[ws.roomID][ws.socketID];
+			 }
+
+			 delete self.clientsMap[ws.socketID];
+			 ws.socketID = undefined;
+		  }
+
+		  if (ws.userID && ws.sessionID) {
+			 $.getJSON(
+					 Config.httpProtocol
+				    + "://"
+				    + Config.httpHost
+				    + "/" + Config.httpURI
+				    + "/json/user_disconnect.php", {
+					   session_id : ws.sessionID,
+				})
+				.success(function() {
+				    logger.info(JSON.stringify({
+					   userID : ws.userID,
+					   messageType : "User disconnect",
+				    }));
+				})
+				.error(function(jqxhr, state, error) {
+				    logger.error(JSON.stringify({
+					   sessionID : message.payload.sessionID,
+					   event : "AJAX user_disconnect.php",
+					   ajax : jqxhr,
+					   state : state,
+					   error: error,
+				    }));
+				})
+				.always(function() {
+				    ws.userID = undefined;
+				    ws.sessionID = undefined;
+				});
 		  }
 	   };
 
@@ -95,6 +151,10 @@
 
 		  ws.on("message", function(message) {
 			 onMessage(ws, message);
+		  });
+
+		  ws.on("close", function() {
+			 onClose(ws);
 		  });
 
 		  if (self.onConnect) {
@@ -147,12 +207,21 @@
 			 .success(function(response) {
 				if (response.session) {
 				    ws.socketID = generateSocketID();
+				    ws.userID = response.session.user_id;
+				    ws.sessionID = response.session.session_id;
 				    self.clients.push(ws);
 				    self.clientsMap[ws.socketID] = ws;
 
+				    logger.info(JSON.stringify({
+					   remoteAddress : ws._socket.remoteAddress,
+					   remotePort : ws._socket.remotePort,
+					   sessionID : message.payload.sessionID,
+					   messageType : "Client handshake succeeded",
+					   response : response,
+				    }));
+
 				    sendMessage(ws, {
 					   msgType : Protocol.MessageTypes.HANDSHAKE_RESPONSE,
-					   error   : false,
 					   payload : {
 						  socketID : ws.socketID,
 					   },
@@ -186,6 +255,47 @@
 				    },
 				});
 			 });
+	   };
+
+	   var onRoomRegistration = function(ws, message) {
+		  if (!message.payload || !message.payload.roomID) {
+			 sendMessage(ws, {
+				msgType : Protocol.MessageTypes.ERROR,
+				error   : true,
+				payload : {
+				    errorMessage : "No roomID specified in the payload",
+				},
+			 });
+
+			 return;
+		  }
+
+		  if (!message.socketID || !(message.socketID in self.clientsMap)) {
+			 sendMessage(ws, {
+				msgType : Protocol.MessageTypes.ERROR,
+				error   : true,
+				payload : {
+				    errorMessage : "No socketID specified or socketID not registered",
+				},
+			 });
+
+			 return;
+		  }
+
+		  ws.roomID = message.payload.roomID;
+		  if (!self.rooms[ws.roomID]) {
+			 self.rooms[ws.roomID] = {};
+		  }
+
+		  self.rooms[ws.roomID][message.socketID] = ws;
+
+		  logger.info(JSON.stringify({
+			 remoteAddress : ws._socket.remoteAddress,
+			 remotePort : ws._socket.remotePort,
+			 socketID : message.socketID,
+			 action : Protocol.MessageTypes.ROOM_REGISTRATION,
+			 message : "roomID:" + ws.roomID,
+		  }));
 	   };
 
 	   var sendMessage = function(ws, message) {
