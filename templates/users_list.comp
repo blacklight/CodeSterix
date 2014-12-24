@@ -10,6 +10,10 @@
 	   <div id="users-list">
 		  {{#each users}}
 			 <div class="users-list-item">
+				<img class="users-list-item-picture" src="{{picture}}" alt="">
+				<span class="users-list-item-name" rel="tooltip"
+				    data-toggle="tooltip" data-placement="bottom"
+				    title="Connected since {{connected_since}}">{{name}}</span>
 			 </div>
 		  {{/each}}
 	   </div>
