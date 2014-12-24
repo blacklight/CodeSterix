@@ -49,6 +49,7 @@ CREATE TABLE tonlist_room_track(
     youtube_id varchar(32) NOT NULL,
     creator_user_id int(10) unsigned,
     created_at timestamp default current_timestamp,
+    playing tinyint(1) unsigned default 0,
     playing_done tinyint(1) unsigned default 0,
 
     FOREIGN KEY(creator_user_id) REFERENCES tonlist_user(id),

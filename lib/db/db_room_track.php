@@ -10,6 +10,7 @@ class DbRoomTrack extends Db {
 	   "youtube_id",
 	   "creator_user_id",
 	   "created_at",
+	   "playing",
 	   "playing_done",
     );
 
