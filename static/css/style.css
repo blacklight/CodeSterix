@@ -40,6 +40,7 @@ body {
 .main-panel-right {
     background-color: #171b20;
     height: 100%;
+    padding-left: 0;
 }
 
 /**********
@@ -292,9 +293,24 @@ display: inline-block;
 
 #room-info-header {
     font-size: 13px;
+    padding-bottom: 10px;
+    padding-left: 10px;
 }
 
 #room-info-header-name {
     font-weight: bold;
+}
+
+.users-list-item {
+    padding-top: 10px;
+    padding-left: 10px;
+    border-top: 1px solid #3f3f3f;
+}
+
+.users-list-item-picture {
+    width: 30px;
+    height: 30px;
+    margin-right: 7px;
+    border-radius: 15px;
 }
 
