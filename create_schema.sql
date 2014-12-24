@@ -32,6 +32,20 @@ CREATE TABLE tonlist_room(
     FOREIGN KEY(creator_user_id) REFERENCES tonlist_user(id)
 );
 
+DROP TABLE IF EXISTS tonlist_room_history;
+CREATE TABLE tonlist_room_history(
+    id int(11) unsigned PRIMARY KEY auto_increment,
+    room_id mediumint(8) unsigned,
+    name varchar(255) NOT NULL,
+    active tinyint(1) unsigned NOT NULL default 1,
+    creator_user_id int(10) unsigned,
+    created_at timestamp default current_timestamp,
+    is_public tinyint(1) unsigned NOT NULL default 1,
+
+    KEY(room_id),
+    FOREIGN KEY(creator_user_id) REFERENCES tonlist_user(id)
+);
+
 DROP TABLE IF EXISTS tonlist_track;
 CREATE TABLE tonlist_track(
     youtube_id varchar(32) PRIMARY KEY NOT NULL,
@@ -65,7 +79,7 @@ CREATE TABLE tonlist_user_room(
 
     PRIMARY KEY(user_id, room_id),
     FOREIGN KEY(user_id) REFERENCES tonlist_user(id),
-    FOREIGN KEY(room_id) REFERENCES tonlist_room(id)
+    FOREIGN KEY(room_id) REFERENCES tonlist_room(id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS tonlist_user_room_history;
@@ -76,18 +90,6 @@ CREATE TABLE tonlist_user_room_history(
     created_at timestamp default current_timestamp,
 
     FOREIGN KEY(user_id) REFERENCES tonlist_user(id),
-    FOREIGN KEY(room_id) REFERENCES tonlist_room(id)
-);
-
-DROP TABLE IF EXISTS tonlist_user_status_history;
-CREATE TABLE tonlist_user_status_history(
-    id int(10) unsigned PRIMARY KEY,
-    user_id int(10) unsigned,
-    logged_in tinyint(1) unsigned NOT NULL,
-    room_id mediumint(8) unsigned,
-    last_updated_at timestamp default current_timestamp,
-
-    FOREIGN KEY(user_id) REFERENCES tonlist_user(id),
-    FOREIGN KEY(room_id) REFERENCES tonlist_room(id)
+    FOREIGN KEY(room_id) REFERENCES tonlist_room(id) ON DELETE CASCADE
 );
 

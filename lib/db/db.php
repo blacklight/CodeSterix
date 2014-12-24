@@ -104,7 +104,7 @@ class Db extends PDO {
 	   return $response;
     }
 
-    public function insert($tuple) {
+    public function insert($tuple, $options) {
 	   $columns = array();
 	   $values = array();
 	   $placeholders = array();
@@ -119,7 +119,10 @@ class Db extends PDO {
 	   $placeholders = join(", ", $placeholders);
 
 	   $args = array();
-	   array_push($args, "INSERT INTO $this->table_name($columns) VALUES($placeholders)");
+	   $ignore = $options && $options["ignore"];
+	   array_push($args, "INSERT " . ($ignore ? "IGNORE" : "")
+		  . " INTO $this->table_name($columns) VALUES($placeholders)");
+
 	   foreach ($values as $value) {
 		  array_push($args, $value);
 	   }
@@ -140,6 +143,10 @@ class Db extends PDO {
 	   } else {
 		  return $ret;
 	   }
+    }
+
+    public function insert_ignore($tuple) {
+	   $this->insert($tuple, array( "ignore" => 1 ));
     }
 }
 

@@ -3,6 +3,7 @@
 require_once "../conf.php";
 require_once TONLIST_PATH . "/lib/db/db_session.php";
 require_once TONLIST_PATH . "/lib/db/db_room.php";
+require_once TONLIST_PATH . "/lib/db/db_room_history.php";
 
 header('Content-Type: application/json');
 
@@ -23,6 +24,14 @@ if (!$session) {
 }
 
 $room = $_DB["room"]->insert(array(
+    "name"            => $_REQUEST["name"],
+    "active"          => 1,
+    "is_public"       => 1,
+    "creator_user_id" => $session->user_id,
+));
+
+$_DB["room_history"]->insert_ignore(array(
+    "room_id"         => $room->id,
     "name"            => $_REQUEST["name"],
     "active"          => 1,
     "is_public"       => 1,
