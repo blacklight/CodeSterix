@@ -67,6 +67,7 @@
 				    result : "Request timed out",
 				}));
 
+				delete self.clientsMap[self.clients[i].socketID];
 				self.clients.splice(i, 1);
 			 }, self.heartBeatTimeout, i);
 
@@ -159,6 +160,7 @@
 				if (response.session) {
 				    ws.socketID = generateSocketID();
 				    self.clients.push(ws);
+				    self.clientsMap[ws.socketID] = ws;
 
 				    sendMessage(ws, {
 					   msgType : Protocol.MessageTypes.HANDSHAKE_RESPONSE,
