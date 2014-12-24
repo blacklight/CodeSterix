@@ -50,10 +50,16 @@ define("websocket_client", [
 	   }
     };
 
+    var send = function(message) {
+	   message.socketID = socketID;
+	   ws.send(JSON.stringify(message));
+    };
+
     return {
 	   initialize : initialize,
 	   onOpen     : onOpen,
 	   onMessage  : onMessage,
+	   send       : send,
     };
 });
 
