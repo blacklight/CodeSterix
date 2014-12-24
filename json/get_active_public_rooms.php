@@ -8,7 +8,6 @@ require_once TONLIST_PATH . "/lib/db/db_user.php";
 header('Content-Type: application/json');
 
 $stmt = $_DB["room"]->search_where(array(
-    "active"    => 1,
     "is_public" => 1,
 ));
 

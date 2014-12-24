@@ -12,7 +12,6 @@ class DbRoom extends Db {
     protected $columns = array(
 	   "id",
 	   "name",
-	   "active",
 	   "creator_user_id",
 	   "created_at",
 	   "is_public",
