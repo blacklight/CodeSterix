@@ -102,131 +102,195 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     width: 100%;
-    height: 400px;
+height: 400px;
 }
 
 #player-loading-video {
-    font-size: 18px;
-    text-align: center;
+font-size: 18px;
+text-align: center;
 }
 
 /***********
- * Search  *
- ***********/
+* Search  *
+***********/
 
 .search-track-album-img {
-    width: 40px;
-    height: 40px;
+width: 40px;
+height: 40px;
 }
 
 .search-track-item-right {
-    background: transparent !important;
+background: transparent !important;
 }
 
 td.search-track-field {
-    padding-left: 10px;
+padding-left: 10px;
 }
 
 span.search-track-field {
-    color: #787e95;
-    font-weight: bold;
+color: #787e95;
+font-weight: bold;
 }
 
 .ui-autocomplete {
-    max-width: 600px;
-    overflow-y: auto;
+max-width: 600px;
+overflow-y: auto;
 }
 
 .search-track-item {
-    border-bottom: 1px solid rgba(0,0,0,0.2);
-    width: 100%;
-    background: transparent !important;
+border-bottom: 1px solid rgba(0,0,0,0.2);
+width: 100%;
+background: transparent !important;
 }
 
 .search-track-image {
-    height: 60px;
+height: 60px;
 }
 
 .search-track-text {
-    padding-left: 10px;
+padding-left: 10px;
 }
 
 .search-track-text-name {
-    color: #484848;
-    font-size: 14px;
+color: #484848;
+font-size: 14px;
 }
 
 .search-track-text-description {
-    color: #7898a8;
-    font-size: 13px;
+color: #7898a8;
+font-size: 13px;
 }
 
 .search-track-spacer {
-    height: 5px;
+height: 5px;
 }
 
 /************
- * Playlist *
- ************/
+* Playlist *
+************/
 
 #playlist-container {
-    height: 100%;
-    padding: 10px;
+height: 100%;
+padding: 10px;
 }
 
 .playlist-item-row {
-    height: 60px;
-    background-color: #2e3338;
-    margin-bottom: 2px;
+height: 60px;
+background-color: #2e3338;
+margin-bottom: 2px;
 }
 
 .playlist-item-row-hover {
-    background-color: #21252D;
-    cursor: pointer;
+background-color: #21252D;
+cursor: pointer;
 }
 
 .playlist-item-image {
-    height: 60px;
+height: 60px;
 }
 
 .playlist-item-row-right {
-    padding-left: 10px;
+padding-left: 10px;
 }
 
 .playlist-item-name {
-    color: #989898;
-    font-size: 14px;
+color: #989898;
+font-size: 14px;
 }
 
 .playlist-item-description {
-    font-size: 13px;
+font-size: 13px;
 }
 
 .empty-playlist {
-    font-size: 18px;
-    position: absolute;
-    top: 40%;
-    left: 25%;
+font-size: 18px;
+position: absolute;
+top: 40%;
+left: 25%;
 }
 
 .playlist-play-hover {
-    display: table;
-    float: left;
-    z-index: 3;
-    opacity: 0.7;
-    height: 60px;
-    background-color: #000;
-    position: absolute;
-    font-size: 40px;
-    text-align: center;
+display: table;
+float: left;
+z-index: 3;
+opacity: 0.7;
+height: 60px;
+background-color: #000;
+position: absolute;
+font-size: 40px;
+text-align: center;
 }
 
 .playlist-play-hover-icon {
-    display: table-cell;
-    vertical-align: middle;
+display: table-cell;
+vertical-align: middle;
+}
+
+/***************
+* Rooms modal *
+***************/
+
+#rooms-modal .modal-body {
+padding: 0;
+}
+
+.room-row {
+list-style-type: none;
+padding: 10px 15px 10px 15px;
+cursor: pointer;
+font-size: 14px;
+}
+
+.room-row:hover {
+background-color: #444;
+}
+
+.room-row-right {
+display: inline-block;
+}
+
+.room-row-img {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid #444;
+    padding: 6px 0 0 1px;
+    border-radius: 15px;
+    margin-right: 10px;
+    display: inline-block;
+    position: relative;
+}
+
+.room-row-name {
+    color: #fff;
+    display: block;
+}
+
+.room-row-details {
+    display: block;
+    font-size: 12px;
+}
+
+.room-row-create-name {
+    color: #fff;
+    display: inline-block;
+}
+
+.room-row-create-input {
+    display: inline-block;
+    margin-left: 15px;
+    transition: all 0.5 ease;
 }
 
 /************
  * Users *
  ************/
+
+#room-info-header {
+    font-size: 13px;
+}
+
+#room-info-header-name {
+    font-weight: bold;
+}
 

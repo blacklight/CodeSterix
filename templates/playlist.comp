@@ -11,13 +11,11 @@
 				    <tr>
 					   <td>
 						  <div class="playlist-item-name">{{name}}</div>
-						  <!--<div class="playlist-item-name">{{displayName}}</div>-->
 					   </td>
 				    </tr>
 				    <tr>
 					   <td>
 						  <div class="playlist-item-description">{{description}}</div>
-						  <!--<div class="playlist-item-description">{{displayDescription}}</div>-->
 					   </td>
 				    </tr>
 				</table>

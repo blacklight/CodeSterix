@@ -1,0 +1,47 @@
+<script id="rooms-modal-template" type="text/x-handlebars-template">
+    <div class="modal fade" id="rooms-modal" tabindex="-1" role="dialog">
+	   <div class="modal-dialog">
+		  <div class="modal-content">
+			 <div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title">Select a video room to join</h4>
+			 </div>
+			 <div class="modal-body">
+				<div class="rooms-list">
+				    <li class="room-row room-row-create">
+					   <span class="room-row-img glyphicon glyphicon-plus"></span>
+					   <div class="room-row-right">
+						  <span class="room-row-create-name">Create a room</span>
+						  <span class="room-row-create-input hidden">
+							 <input type="input" id="room-create-input" placeholder="Room name" class="form-control">
+						  </span>
+					   </div>
+				    </li>
+
+				    {{#each rooms}}
+					   <li class="room-row" data-room-id="{{id}}">
+						  <span class="room-row-img" style=
+							 "background: url('{{creator/picture}}'); background-size: 30px">
+						  </span>
+						  <div class="room-row-right">
+							 <span class="room-row-name">
+								{{name}}
+							 </span>
+							 <span class="room-row-details">
+								Created
+								{{#if creator}}
+								    by {{creator/name}}
+								{{/if}}
+								on {{created_at}}
+							 </span>
+						  </div>
+					   </li>
+				    {{/each}}
+				</div>
+			 </div>
+			 <div class="modal-footer"></div>
+		  </div><!-- /.modal-content -->
+	   </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</script>
+

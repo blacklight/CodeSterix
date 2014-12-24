@@ -1,8 +1,8 @@
 <?php
 
 require_once "conf.php";
-require_once "lib/db/db_user.php";
-require_once "lib/db/db_session.php";
+require_once TONLIST_PATH . "/lib/db/db_user.php";
+require_once TONLIST_PATH . "/lib/db/db_session.php";
 
 session_start();
 
@@ -63,12 +63,15 @@ if (isset($user) && $user) {
     ));
 ?>
 
-    <input type="hidden" id="user_id" value="<?php echo $user->id ?>">
-    <input type="hidden" id="user_name" value="<?php echo $user->name ?>">
-    <input type="hidden" id="user_given_name" value="<?php echo $user->given_name ?>">
-    <input type="hidden" id="user_email" value="<?php echo $user->email ?>">
-    <input type="hidden" id="user_picture" value="<?php echo $user->picture ?>">
-    <input type="hidden" id="user_picture" value="<?php echo $user->picture ?>">
+    <script>
+	   window.config = window.config || {};
+	   window.config.user = {};
+	   window.config.user.id = <?php echo $user->id ?>;
+	   window.config.user.name = "<?php echo $user->name ?>";
+	   window.config.user.givenName = "<?php echo $user->given_name ?>";
+	   window.config.user.email = "<?php echo $user->email ?>";
+	   window.config.user.picture = "<?php echo $user->picture ?>";
+    </script>
 
 <?php
 } else if (!preg_match("#" . LOGIN_URI . "$#", $_SERVER["PHP_SELF"])) {

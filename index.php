@@ -26,12 +26,15 @@ require_once "auth.php";
 	   include('templates/search.comp');
 	   include('templates/playlist.comp');
 	   include('templates/player.comp');
+	   include('templates/rooms_modal.comp');
+	   include('templates/users_list.comp');
     ?>
 </head>
 
 <body>
     <div id="header"></div>
-    <div class="row">
+    <div id="rooms-modal-container"></div>
+    <div class="row hidden" id="panel-container">
 	   <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 main-panel main-panel-left">
 		  <div id="player-no-video"></div>
 		  <div id="player-loading-video" class="hidden"></div>

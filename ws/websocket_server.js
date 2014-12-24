@@ -52,7 +52,7 @@
 	   var initializeLogger = function() {
 		  log4js.clearAppenders();
 		  log4js.loadAppender("file");
-		  log4js.addAppender(log4js.appenders.file("ws.log"), "ws");
+		  log4js.addAppender(log4js.appenders.file("../log/ws.log"), "ws");
 		  logger = log4js.getLogger("ws");
 		  logger.setLevel("DEBUG");
 		  logger.info("WebSocket server initialized");
@@ -114,14 +114,16 @@
 	   };
 
 	   var onMessage = function(ws, message) {
-		  logger.debug(JSON.stringify({
-			 remoteAddress : ws._socket.remoteAddress,
-			 remotePort : ws._socket.remotePort,
-			 socketID : message.socketID || undefined,
-			 message : message,
-		  }));
-
 		  message = JSON.parse(message);
+
+		  if (message.msgType !== Protocol.MessageTypes.HANDSHAKE_RESPONSE) {
+			 logger.debug(JSON.stringify({
+				remoteAddress : ws._socket.remoteAddress,
+				remotePort : ws._socket.remotePort,
+				socketID : message.socketID || undefined,
+				message : JSON.stringify(message),
+			 }));
+		  }
 
 		  if (ws.msgHandlers[message.msgType]) {
 			 ws.msgHandlers[message.msgType].forEach(function(msgHandler) {
@@ -197,15 +199,24 @@
 	   };
 
 	   var sendMessage = function(ws, message) {
-		  logger.debug(JSON.stringify({
-			 remoteAddress : ws._socket.remoteAddress,
-			 remotePort : ws._socket.remotePort,
-			 socketID : ws.socketID || undefined,
-			 action : "Message OUT",
-			 message : message,
-		  }));
+		  try {
+			 if (message.msgType !== Protocol.MessageTypes.HANDSHAKE_REQUEST) {
+				logger.debug(JSON.stringify({
+				    remoteAddress : ws._socket.remoteAddress,
+				    remotePort : ws._socket.remotePort,
+				    socketID : ws.socketID || undefined,
+				    action : "Message OUT",
+				    message : message,
+				}));
+			 }
 
-		  ws.send(JSON.stringify(message));
+			 ws.send(JSON.stringify(message));
+		  } catch (e) {
+			 logger.warn(JSON.stringify({
+				error   : e.toString(),
+				message : message,
+			 }));
+		  }
 	   };
 	   
 	   var generateSocketID = function() {

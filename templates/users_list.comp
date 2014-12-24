@@ -1,0 +1,18 @@
+<script id="users-list-template" type="text/x-handlebars-template">
+    <div id="room-info">
+	   <div id="room-info-header">
+		  <div id="room-info-header-name"
+			 rel="tooltip" data-toggle="tooltip" data-placement="bottom"
+			 title="Created by {{creator/name}} on {{created_at}}">{{name}}</div>
+		  <div id="room-info-header-users-summary">{{users_count}} users connected</div>
+	   </div>
+
+	   <div id="users-list">
+		  {{#each users}}
+			 <div class="users-list-item">
+			 </div>
+		  {{/each}}
+	   </div>
+    </div>
+</script>
+

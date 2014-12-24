@@ -1,21 +1,22 @@
 <?php
 
 require_once "../conf.php";
-require_once "../lib/db/db_session.php";
+require_once TONLIST_PATH . "/lib/db/db_session.php";
 
 header('Content-Type: application/json');
 
 if (!isset($_REQUEST["session_id"])) {
-    die("Missing required \"session_id\" argument");
+    header('HTTP/1.0 403 Forbidden');
+    exit(1);
 }
 
-$db_session = new DbUserSession();
-$session = $db_session->retrieve($_REQUEST["session_id"]);
+$session = $_DB["user_session"]->retrieve($_REQUEST["session_id"]);
 
 if ($session) {
     print json_encode(array("session" => $session));
 } else {
-    print json_encode(array("error" => "No such session"));
+    header('HTTP/1.0 403 Forbidden');
+    exit(1);
 }
 
 ?>

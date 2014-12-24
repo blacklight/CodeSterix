@@ -1,7 +1,7 @@
 <?php
 
 require_once "conf.php";
-require_once "auth.php";
+require_once TONLIST_PATH . "/auth.php";
 
 if (isset($_GET["code"])) {
     $client->authenticate($_GET["code"]);

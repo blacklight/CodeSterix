@@ -1,0 +1,10 @@
+<configuration xmlns="http://logging.apache.org/log4php/">
+    <appender name="db_appender" class="LoggerAppenderFile">
+	   <param name="file" value="/srv/http/CodeSterix/log/db.log" />
+    </appender>
+    <root>
+        <level value="DEBUG" />
+        <appender_ref ref="db_appender" />
+    </root>
+</configuration>
+

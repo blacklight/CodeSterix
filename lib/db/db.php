@@ -4,6 +4,7 @@ class Db extends PDO {
     protected $table_name;
     protected $columns = array();
     protected $primary_key = null;
+    protected $db_log;
 
     public function __construct($options=null) {
 	   parent::__construct(
@@ -15,6 +16,11 @@ class Db extends PDO {
 		  $options);
 
 	   parent::setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	   $this->db_log = Logger::getLogger("db_logger");
+    }
+
+    public function get_table_name() {
+	   return $this->table_name;
     }
 
     public function retrieve($key) {
@@ -86,6 +92,12 @@ class Db extends PDO {
     public function query($query) {
 	   $args = func_get_args();
 	   array_shift($args);
+
+	   $this->db_log->info(json_encode(array(
+		  "query"  => $query,
+		  "params" => print_r($args, true),
+	   )));
+
 	   $response = parent::prepare($query);
 	   $ret = $response->execute($args);
 

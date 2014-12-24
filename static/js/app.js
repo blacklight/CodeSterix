@@ -9,28 +9,30 @@ requirejs.config({
 
 define([
     "jquery",
+    "utils",
     "lib/handlebars",
     "player",
     "playlist",
     "search",
+    "room",
     "websocket_client",
     "lib/bootstrap",
     "lib/jquery.ui.autocomplete.html",
-], function($, Handlebars, Player, Playlist, Search, WebSocketClient) {
+], function($, Utils, Handlebars, Player, Playlist, Search, Room, WebSocketClient) {
     "use strict";
 
-    var userinfo = {},
+    var args = {},
 	   headerTemplate,
 	   webSocketClient,
 	   emptyPlaylistTemplate,
 	   playerLoadingTemplate;
 
     var init = function() {
-	   initUserInfo();
 	   initTemplates();
 	   initElements();
 	   initBindings();
 	   initWebSocketClient();
+	   Room.initRoom();
     };
 
     var initTemplates = function() {
@@ -40,19 +42,11 @@ define([
     };
 
     var initElements = function() {
-	   $("#header").html(headerTemplate(userinfo));
+	   args = Utils.getUrlArguments();
+	   $("#header").html(headerTemplate(window.config.user));
 	   $("#playlist-container").html(emptyPlaylistTemplate);
 	   $("#player-loading-video").html(playerLoadingTemplate);
-    };
-
-    var initUserInfo = function() {
-	   userinfo = {
-		  id        : $("#user_id").val(),
-		  name      : $("#user_name").val(),
-		  givenName : $("#user_given_name").val(),
-		  email     : $("#user_email").val(),
-		  picture   : $("#user_picture").val(),
-	   };
+	   Room.initRoomsModal();
     };
 
     var initBindings = function() {
