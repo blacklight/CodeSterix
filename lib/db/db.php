@@ -104,7 +104,7 @@ class Db extends PDO {
 	   return $response;
     }
 
-    public function insert($tuple, $options) {
+    public function insert($tuple, $options = null) {
 	   $columns = array();
 	   $values = array();
 	   $placeholders = array();
