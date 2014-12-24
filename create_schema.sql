@@ -24,7 +24,6 @@ DROP TABLE IF EXISTS tonlist_room;
 CREATE TABLE tonlist_room(
     id mediumint(8) unsigned PRIMARY KEY auto_increment,
     name varchar(255) NOT NULL,
-    active tinyint(1) unsigned NOT NULL default 1,
     creator_user_id int(10) unsigned,
     created_at timestamp default current_timestamp,
     is_public tinyint(1) unsigned NOT NULL default 1,
@@ -37,7 +36,6 @@ CREATE TABLE tonlist_room_history(
     id int(11) unsigned PRIMARY KEY auto_increment,
     room_id mediumint(8) unsigned,
     name varchar(255) NOT NULL,
-    active tinyint(1) unsigned NOT NULL default 1,
     creator_user_id int(10) unsigned,
     created_at timestamp default current_timestamp,
     is_public tinyint(1) unsigned NOT NULL default 1,
