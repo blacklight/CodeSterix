@@ -3,10 +3,11 @@ define([
     "utils",
     "playlist",
     "lib/handlebars",
+    "protocol",
     "websocket_client",
     "lib/bootstrap",
     "lib/jquery-ui",
-], function($, Utils, Playlist, Handlebars, WebSocketClient) {
+], function($, Utils, Playlist, Handlebars, Protocol, WebSocketClient) {
     "use strict";
 
     var args = {},
@@ -38,7 +39,6 @@ define([
 
 			 $.getJSON("json/create_room.php", {
 				name       : name,
-				session_id : Utils.getCookie("PHPSESSID"),
 			 })
 			 .success(function(response) {
 				initRoom(response.room.id);
@@ -55,7 +55,6 @@ define([
 
 	   if (roomID) {
 		  $.getJSON("json/enter_room.php", {
-			 session_id : Utils.getCookie("PHPSESSID"),
 			 room_id    : roomID
 		  })
 		  .success(function() {
@@ -63,6 +62,13 @@ define([
 				    room_id : roomID
 			 })
 			 .success(function(response) {
+				WebSocketClient.send({
+				    msgType : Protocol.MessageTypes.ROOM_REGISTRATION,
+				    payload : {
+					   roomID : roomID,
+				    }
+				});
+
 				window.config.room = response.room;
 				window.location.href = Utils.createUrlFromArguments({
 				    room_id : roomID
