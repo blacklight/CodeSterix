@@ -71,12 +71,6 @@
 				self.clients.splice(i, 1);
 			 }, self.heartBeatTimeout, i);
 
-			 logger.debug(JSON.stringify({
-				socketID : self.clients[i].socketID,
-				messageType : Protocol.MessageTypes.HEARTBEAT_REQUEST,
-				action : "Heartbeat request",
-			 }));
-
 			 sendMessage(self.clients[i], {
 				msgType : Protocol.MessageTypes.HEARTBEAT_REQUEST,
 				error   : false,
@@ -86,12 +80,6 @@
 			 self.clients[i].msgHandlers[Protocol.MessageTypes.HEARTBEAT_RESPONSE].push(function(ws, message) {
 				clearTimeout(responseTimeout);
 				ws.msgHandlers[Protocol.MessageTypes.HEARTBEAT_RESPONSE].pop();
-
-				logger.debug(JSON.stringify({
-				    socketID : ws.socketID,
-				    messageType : Protocol.MessageTypes.HEARTBEAT_REQUEST,
-				    response : "Heartbeat received",
-				}));
 			 });
 		  }
 	   };
@@ -117,7 +105,7 @@
 	   var onMessage = function(ws, message) {
 		  message = JSON.parse(message);
 
-		  if (message.msgType !== Protocol.MessageTypes.HANDSHAKE_RESPONSE) {
+		  if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_RESPONSE) {
 			 logger.debug(JSON.stringify({
 				remoteAddress : ws._socket.remoteAddress,
 				remotePort : ws._socket.remotePort,
@@ -202,7 +190,7 @@
 
 	   var sendMessage = function(ws, message) {
 		  try {
-			 if (message.msgType !== Protocol.MessageTypes.HANDSHAKE_REQUEST) {
+			 if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_REQUEST) {
 				logger.debug(JSON.stringify({
 				    remoteAddress : ws._socket.remoteAddress,
 				    remotePort : ws._socket.remotePort,
