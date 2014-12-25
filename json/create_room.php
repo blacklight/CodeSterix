@@ -5,7 +5,7 @@ require_once TONLIST_PATH . "/lib/db/db_room.php";
 require_once TONLIST_PATH . "/lib/db/db_room_history.php";
 
 session_start();
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf8');
 
 if (!isset($_SESSION["user"])) {
     header('HTTP/1.0 403 Forbidden');

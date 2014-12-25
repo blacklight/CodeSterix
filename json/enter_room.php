@@ -5,7 +5,7 @@ require_once TONLIST_PATH . "/lib/db/db_room.php";
 require_once TONLIST_PATH . "/lib/db/db_user.php";
 
 session_start();
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf8');
 
 if (!isset($_REQUEST["room_id"])) {
     header('HTTP/1.0 400 Bad Request');

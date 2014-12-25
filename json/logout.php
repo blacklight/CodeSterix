@@ -1,5 +1,6 @@
 <?php
 
+header('Content-Type: application/json; charset=utf8');
 session_start();
 
 if (isset($_SESSION["access_token"])) {

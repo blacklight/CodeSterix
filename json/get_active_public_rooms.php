@@ -5,7 +5,7 @@ require_once TONLIST_PATH . "/lib/db/db_room.php";
 require_once TONLIST_PATH . "/lib/db/db_user_room.php";
 require_once TONLIST_PATH . "/lib/db/db_user.php";
 
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf8');
 
 $stmt = $_DB["room"]->search_where(array(
     "is_public" => 1,

@@ -4,7 +4,7 @@ require_once "../conf.php";
 require_once TONLIST_PATH . "/lib/db/db_session.php";
 require_once TONLIST_PATH . "/lib/db/db_user.php";
 
-header("Content-type", "application/json");
+header('Content-Type: application/json; charset=utf8');
 
 if (!isset($_REQUEST["session_id"])) {
     $user = $_SESSION["user"];
