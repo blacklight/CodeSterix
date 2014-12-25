@@ -19,10 +19,10 @@ class DbUser extends Db {
 
     protected $primary_key = "id";
 
-    public function disconnect($user_id, $new_room_id) {
+    public function disconnect($user_id, $new_room_id = null) {
 	   global $_DB;
 
-	   if (!isset($new_room_id)) {
+	   if (!$new_room_id) {
 		  $this->query("UPDATE " . $this->table_name
 			 . " SET logged_in = 0 WHERE id = ?",
 			 $user_id);
@@ -33,7 +33,7 @@ class DbUser extends Db {
 	   ));
 
 	   while ($user_room = $rooms->fetchObject()) {
-		  if (isset($new_room_id) && $user_room->room_id == $new_room_id) {
+		  if ($new_room_id && $user_room->room_id == $new_room_id) {
 			 continue;
 		  }
 
