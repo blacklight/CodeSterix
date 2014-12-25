@@ -32,7 +32,7 @@ $track = $_DB["track"]->create_track(array(
 $room_track = $_DB["room_track"]->insert(array(
     "room_id"          => $_REQUEST["room_id"],
     "youtube_id"       => $_REQUEST["youtube_id"],
-    "creator_user_id"  => $_SESSION["user"]->id,
+    "creator_user_id"  => $u->id,
     "playing"          => 0,
     "playing_done"     => 0,
 ));
@@ -41,7 +41,7 @@ $_DB["room_track_history"]->insert(array(
     "room_track_id"    => $room_track->id,
     "room_id"          => $_REQUEST["room_id"],
     "youtube_id"       => $_REQUEST["youtube_id"],
-    "creator_user_id"  => $_SESSION["user"]->id,
+    "creator_user_id"  => $u->id,
 ));
 
 $creator = $_DB["user"]->retrieve($room_track->creator_user_id);

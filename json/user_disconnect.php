@@ -7,7 +7,7 @@ require_once TONLIST_PATH . "/lib/db/db_user.php";
 header('Content-Type: application/json; charset=utf8');
 
 if (!isset($_REQUEST["session_id"])) {
-    $user = $_SESSION["user"];
+    $user = $u;
 } else {
     $session = $_DB["user_session"]->retrieve($_REQUEST["session_id"]);
     if (!$session) {

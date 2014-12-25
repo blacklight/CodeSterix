@@ -16,7 +16,7 @@ if (!$room) {
 }
 
 $_DB["user"]->enter_room(array(
-    "user_id" => $_SESSION["user"]->id,
+    "user_id" => $u->id,
     "room_id" => $_REQUEST["room_id"],
 ));
 

@@ -12,14 +12,14 @@ if (!isset($_REQUEST["name"]) || $_REQUEST["name"] == "") {
 $room = $_DB["room"]->insert(array(
     "name"            => $_REQUEST["name"],
     "is_public"       => 1,
-    "creator_user_id" => $_SESSION["user"]->id,
+    "creator_user_id" => $u->id,
 ));
 
 $_DB["room_history"]->insert_ignore(array(
     "room_id"         => $room->id,
     "name"            => $_REQUEST["name"],
     "is_public"       => 1,
-    "creator_user_id" => $_SESSION["user"]->id,
+    "creator_user_id" => $u->id,
 ));
 
 print json_encode(array("room" => $room));
