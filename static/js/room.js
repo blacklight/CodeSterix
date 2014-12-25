@@ -99,6 +99,7 @@ define([
 		  }
 
 		  if (!args || (args && !args.onlyPlayList)) {
+			 window.config.room.created_at = Utils.sqlDateToPrettyDate(window.config.room.created_at);
 			 window.config.room.users_count = window.config.room.users.length;
 			 window.config.room.users.forEach(function(user) {
 				user.connected_since = Utils.sqlDateToPrettyDate(user.connected_since);
