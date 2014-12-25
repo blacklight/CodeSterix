@@ -44,7 +44,7 @@ define("websocket_client", [
 		  socketID = message.payload.socketID;
 	   } else if (message.msgType === Protocol.MessageTypes.USER_LIST_CHANGED && message.payload) {
 		  if (window.config.room) {
-			 require("room").updateRoom(window.config.room.id);
+			 require("room").updateRoom(window.config.room.id, { onlyUsersList: true });
 		  }
 	   } else if (message.msgType === Protocol.MessageTypes.HEARTBEAT_REQUEST) {
 		  ws.send(JSON.stringify({

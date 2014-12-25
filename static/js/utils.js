@@ -44,10 +44,16 @@ define("utils", [
 	   return baseUrl + "#" + argString;
     };
 
+    var jsDateToSqlDate = function(date) {
+	   return date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate()
+		  + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    };
+
     return {
 	   getCookie : getCookie,
 	   getUrlArguments : getUrlArguments,
 	   createUrlFromArguments : createUrlFromArguments,
+	   jsDateToSqlDate : jsDateToSqlDate,
     };
 });
 

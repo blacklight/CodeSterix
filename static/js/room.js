@@ -78,7 +78,7 @@ define([
 	   }
     };
 
-    var updateRoom = function(roomID) {
+    var updateRoom = function(roomID, args) {
 	   $.getJSON("json/get_room_status.php", {
 		  room_id : roomID
 	   })
@@ -90,11 +90,13 @@ define([
 
 		  var position = 0;
 
-		  window.config.room.tracks.forEach(function(track) {
-			 track.id = track.youtube_id;
-			 track.position = position++;
-			 Playlist.append(track);
-		  });
+		  if (!args || (args && !args.onlyUsersList)) {
+			 Playlist.clear();
+			 window.config.room.tracks.forEach(function(track) {
+				track.position = position++;
+				Playlist.append(track);
+			 });
+		  }
 
 		  window.config.room.users_count = window.config.room.users.length;
 		  $("#users-container").html(usersListTemplate(window.config.room));

@@ -11,9 +11,10 @@ define("search", [
     "jquery",
     "lib/handlebars",
     "playlist",
+    "utils",
     "lib/jquery-ui",
     "lib/jquery.text-overflow",
-], function($, Handlebars, Playlist) {
+], function($, Handlebars, Playlist, Utils) {
     "use strict";
 
     var searchItemTemplate = Handlebars.compile($("#search-item").html());
@@ -27,13 +28,21 @@ define("search", [
 
 	   if ($item.length && $item.data("id")) {
 		  var track = {
-			 id                 : $item.data("id"),
+			 youtube_id         : $item.data("id"),
 			 name               : $item.data("name"),
 			 description        : $item.data("description"),
 			 image              : $item.data("image-url"),
+			 room_id            : window.config.room ? window.config.room.id : undefined,
+			 playing            : false,
+			 playing_done       : false,
+			 added_at           : Utils.jsDateToSqlDate(new Date()),
+			 creator_id         : window.config.user.id,
+			 creator_name       : window.config.user.name,
+			 creator_given_name : window.config.user.givenName,
+			 creator_picture    : window.config.user.picture,
 		  };
 
-		  Playlist.append(track);
+		  Playlist.append(track, { appendToRoom: true });
 	   }
     };
 

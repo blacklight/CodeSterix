@@ -29,28 +29,46 @@ define("playlist", [
 	   return itemPosition;
     };
 
-    var append = function(track) {
-	   track.position = getNextItemPosition();
-	   currentPlaylist.push(track);
-	   videosMap[track.id] = track;
+    var clear = function() {
+	   currentPlaylist = [];
+	   videosMap = {};
+	   $("#playlist-container").html("");
+    };
 
-	   $(".empty-playlist").remove();
-	   $("#playlist-container").append(playlistRowTemplate(track));
-	   $(".playlist-item-name").textOverflow();
-	   $(".playlist-item-description").textOverflow();
+    var append = function(track, args) {
+	   if (!window.config.room) {
+		  alert("You are not connected to any room");
+		  return;
+	   }
+
+	   currentPlaylist.push(track);
+	   videosMap[track.youtube_id] = track;
 
 	   var Player = require("player");
 	   if (!Player.isInitialized()) {
-		  Player.initialize(track.id);
+		  Player.initialize(track.youtube_id);
 	   }
 
-	   if (window.config.room) {
+	   if (!args || !args.appendToRoom) {
+		  $(".empty-playlist").remove();
+		  $("#playlist-container").append(playlistRowTemplate(track));
+		  $(".playlist-item-name").textOverflow();
+		  $(".playlist-item-description").textOverflow();
+	   } else {
 		  $.post("json/append_video_to_room.php", {
 			 room_id     : window.config.room.id,
-			 youtube_id  : track.id,
+			 youtube_id  : track.youtube_id,
 			 name        : track.name,
 			 description : track.description,
 			 image       : track.image,
+		  })
+		  .success(function(response) {
+			 var track = response.track;
+			 track.position = getNextItemPosition();
+			 $(".empty-playlist").remove();
+			 $("#playlist-container").append(playlistRowTemplate(track));
+			 $(".playlist-item-name").textOverflow();
+			 $(".playlist-item-description").textOverflow();
 		  });
 	   }
     };
@@ -67,6 +85,7 @@ define("playlist", [
 
     return {
 	   append: append,
+	   clear:  clear,
 	   updateCurrentIndexByVideoId: updateCurrentIndexByVideoId,
 	   getNextVideo: getNextVideo,
     };
