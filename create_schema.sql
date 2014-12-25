@@ -41,7 +41,7 @@ CREATE TABLE tonlist_room_history(
     is_public tinyint(1) unsigned NOT NULL default 1,
 
     KEY(room_id),
-    FOREIGN KEY(creator_user_id) REFERENCES tonlist_user(id)
+    KEY(creator_user_id)
 );
 
 DROP TABLE IF EXISTS tonlist_track;
@@ -87,7 +87,7 @@ CREATE TABLE tonlist_user_room_history(
     room_id mediumint(8) unsigned,
     created_at timestamp default current_timestamp,
 
-    FOREIGN KEY(user_id) REFERENCES tonlist_user(id),
-    FOREIGN KEY(room_id) REFERENCES tonlist_room(id) ON DELETE CASCADE
+    KEY(user_id),
+    KEY(room_id)
 );
 
