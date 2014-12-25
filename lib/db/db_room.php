@@ -41,11 +41,18 @@ class DbRoom extends Db {
 	   global $_DB;
 
 	   return $this->query("
-		  SELECT t.*
-			  , u.name AS user_name
-			  , u.given_name AS user_given_name
-			  , u.picture AS user_picture
-			  , rt.created_at AS track_created_at
+		  SELECT t.youtube_id
+			  , t.name
+			  , t.description AS description
+			  , t.image AS image
+			  , rt.room_id
+			  , rt.playing
+			  , rt.playing_done
+			  , rt.created_at AS added_at
+			  , u.id AS creator_id
+			  , u.name AS creator_name
+			  , u.given_name AS creator_given_name
+			  , u.picture AS creator_picture
 		    FROM " . $_DB["user"]->get_table_name() . " u
 		    JOIN " . $_DB["room_track"]->get_table_name() . " rt
 		      ON rt.creator_user_id = u.id
