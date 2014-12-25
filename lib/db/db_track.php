@@ -17,7 +17,7 @@ class DbTrack extends Db {
     public function create_track($args) {
 	   $this->query("INSERT INTO $this->table_name "
 		  . "(youtube_id, name, description, image) VALUES "
-		  . "(?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
+		  . "(?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
 		  . "name = ?, description = ?, image = ?",
 		  $args["youtube_id"], $args["name"], $args["description"], $args["image"],
 		  $args["name"], $args["description"], $args["image"]);
