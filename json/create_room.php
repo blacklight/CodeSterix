@@ -19,7 +19,6 @@ if (!isset($_REQUEST["name"]) || $_REQUEST["name"] == "") {
 
 $room = $_DB["room"]->insert(array(
     "name"            => $_REQUEST["name"],
-    "active"          => 1,
     "is_public"       => 1,
     "creator_user_id" => $_SESSION["user"]->id,
 ));
@@ -27,7 +26,6 @@ $room = $_DB["room"]->insert(array(
 $_DB["room_history"]->insert_ignore(array(
     "room_id"         => $room->id,
     "name"            => $_REQUEST["name"],
-    "active"          => 1,
     "is_public"       => 1,
     "creator_user_id" => $_SESSION["user"]->id,
 ));
