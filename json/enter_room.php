@@ -1,6 +1,7 @@
 <?php
 
 require_once "../conf.php";
+require_once TONLIST_PATH . "/lib/db/db_room.php";
 require_once TONLIST_PATH . "/lib/db/db_user.php";
 
 session_start();
@@ -13,6 +14,12 @@ if (!isset($_REQUEST["room_id"])) {
 
 if (!isset($_SESSION["user"])) {
     header('HTTP/1.0 403 Forbidden');
+    exit(1);
+}
+
+$room = $_DB["room"]->retrieve($_REQUEST["room_id"]);
+if (!$room) {
+    header('HTTP/1.0 404 Not Found');
     exit(1);
 }
 
