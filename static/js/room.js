@@ -98,9 +98,11 @@ define([
 			 });
 		  }
 
-		  window.config.room.users_count = window.config.room.users.length;
-		  $("#users-container").html(usersListTemplate(window.config.room));
-		  $("[rel='tooltip']").tooltip();
+		  if (!args || (args && !args.onlyPlayList)) {
+			 window.config.room.users_count = window.config.room.users.length;
+			 $("#users-container").html(usersListTemplate(window.config.room));
+			 $("[rel='tooltip']").tooltip();
+		  }
 
 		  $("#rooms-modal").modal("hide");
 		  $("#panel-container").removeClass("hidden");

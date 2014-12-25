@@ -9,9 +9,11 @@ requirejs.config({
 
 define("playlist", [
     "jquery",
+    "websocket_client",
+    "protocol",
     "lib/handlebars",
     "lib/jquery.text-overflow",
-], function($, Handlebars) {
+], function($, WebSocketClient, Protocol, Handlebars) {
     "use strict";
 
     var currentPlaylist = [];
@@ -69,6 +71,11 @@ define("playlist", [
 			 $("#playlist-container").append(playlistRowTemplate(track));
 			 $(".playlist-item-name").textOverflow();
 			 $(".playlist-item-description").textOverflow();
+
+			 WebSocketClient.send({
+				msgType : Protocol.MessageTypes.PLAYLIST_CHANGED,
+				payload : {}
+			 });
 		  });
 	   }
     };

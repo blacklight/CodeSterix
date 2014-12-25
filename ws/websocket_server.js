@@ -46,12 +46,19 @@
 		  Object.keys(Protocol.MessageTypes).forEach(function(msgType) {
 			 ws.msgHandlers[Protocol.MessageTypes[msgType]] = [];
 
-			 if (msgType === "HANDSHAKE_REQUEST") {
-				ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onHandshakeRequest);
-			 } else if (msgType === "HEARTBEAT_RESPONSE") {
-				ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onHeartBeatResponse);
-			 } else if (msgType === "ROOM_REGISTRATION") {
-				ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onRoomRegistration);
+			 switch (msgType) {
+				case "HANDSHAKE_REQUEST":
+				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onHandshakeRequest);
+				    break;
+				case "HEARTBEAT_RESPONSE":
+				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onHeartBeatResponse);
+				    break;
+				case "ROOM_REGISTRATION":
+				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onRoomRegistration);
+				    break;
+				case "PLAYLIST_CHANGED":
+				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onPlaylistChanged);
+				    break;
 			 }
 		  });
 	   };
@@ -310,6 +317,31 @@
 		  notifyUserListChanged(ws.roomID);
 	   };
 
+	   var onPlaylistChanged = function(ws, message) {
+		  if (!message.socketID || !(message.socketID in self.clientsMap)) {
+			 sendMessage(ws, {
+				msgType : Protocol.MessageTypes.ERROR,
+				error   : true,
+				payload : {
+				    errorMessage : "No socketID specified or socketID not registered",
+				},
+			 });
+
+			 return;
+		  }
+
+		  var roomID = self.clientsMap[message.socketID].roomID;
+		  logger.info(JSON.stringify({
+			 remoteAddress : ws._socket.remoteAddress,
+			 remotePort : ws._socket.remotePort,
+			 socketID : message.socketID,
+			 action : Protocol.MessageTypes.PLAYLIST_CHANGED,
+			 message : "{roomID:" + roomID + "}",
+		  }));
+
+		  notifyPlayListChanged(roomID);
+	   };
+
 	   var sendMessage = function(ws, message) {
 		  try {
 			 if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_REQUEST) {
@@ -350,6 +382,16 @@
 			 var sock = self.rooms[roomID][socketID];
 			 sendMessage(sock, {
 				msgType : Protocol.MessageTypes.USER_LIST_CHANGED,
+				payload : {},
+			 });
+		  });
+	   };
+
+	   var notifyPlayListChanged = function(roomID) {
+		  Object.keys(self.rooms[roomID]).forEach(function(socketID) {
+			 var sock = self.rooms[roomID][socketID];
+			 sendMessage(sock, {
+				msgType : Protocol.MessageTypes.PLAYLIST_CHANGED,
 				payload : {},
 			 });
 		  });
