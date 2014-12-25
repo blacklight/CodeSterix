@@ -307,10 +307,14 @@ vertical-align: middle;
     font-weight: bold;
 }
 
-.users-list-item {
+#users-list {
     padding-top: 10px;
-    padding-left: 10px;
     border-top: 1px solid #3f3f3f;
+}
+
+.users-list-item {
+    padding-left: 10px;
+    padding-top: 5px;
 }
 
 .users-list-item-picture {
