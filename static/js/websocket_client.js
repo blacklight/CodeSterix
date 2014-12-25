@@ -42,6 +42,10 @@ define("websocket_client", [
 
 	   if (message.msgType === Protocol.MessageTypes.HANDSHAKE_RESPONSE && message.payload) {
 		  socketID = message.payload.socketID;
+	   } else if (message.msgType === Protocol.MessageTypes.USER_LIST_CHANGED && message.payload) {
+		  if (window.config.room) {
+			 require("room").updateRoom(window.config.room.id);
+		  }
 	   } else if (message.msgType === Protocol.MessageTypes.HEARTBEAT_REQUEST) {
 		  ws.send(JSON.stringify({
 			 msgType  : Protocol.MessageTypes.HEARTBEAT_RESPONSE,

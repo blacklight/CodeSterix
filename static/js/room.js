@@ -58,39 +58,47 @@ define([
 			 room_id    : roomID
 		  })
 		  .success(function() {
-			 $.getJSON("json/get_room_status.php", {
-				    room_id : roomID
-			 })
-			 .success(function(response) {
-				WebSocketClient.send({
-				    msgType : Protocol.MessageTypes.ROOM_REGISTRATION,
-				    payload : {
-					   roomID : roomID,
-				    }
-				});
-
-				window.config.room = response.room;
-				window.location.href = Utils.createUrlFromArguments({
-				    room_id : roomID
-				});
-
-				var position = 0;
-
-				window.config.room.tracks.forEach(function(track) {
-				    track.id = track.youtube_id;
-				    track.position = position++;
-				    Playlist.append(track);
-				});
-
-				window.config.room.users_count = window.config.room.users.length;
-				$("#users-container").html(usersListTemplate(window.config.room));
-				$("[rel='tooltip']").tooltip();
-
-				$("#rooms-modal").modal("hide");
-				$("#panel-container").removeClass("hidden");
+			 WebSocketClient.send({
+				msgType : Protocol.MessageTypes.ROOM_REGISTRATION,
+				payload : {
+				    roomID : roomID,
+				}
 			 });
+
+			 updateRoom(roomID);
+		  })
+		  .error(function() {
+			 $("#rooms-modal").modal("show");
+			 window.location.href = Utils.createUrlFromArguments();
 		  });
 	   }
+    };
+
+    var updateRoom = function(roomID) {
+	   $.getJSON("json/get_room_status.php", {
+		  room_id : roomID
+	   })
+	   .success(function(response) {
+		  window.config.room = response.room;
+		  window.location.href = Utils.createUrlFromArguments({
+			 room_id : roomID
+		  });
+
+		  var position = 0;
+
+		  window.config.room.tracks.forEach(function(track) {
+			 track.id = track.youtube_id;
+			 track.position = position++;
+			 Playlist.append(track);
+		  });
+
+		  window.config.room.users_count = window.config.room.users.length;
+		  $("#users-container").html(usersListTemplate(window.config.room));
+		  $("[rel='tooltip']").tooltip();
+
+		  $("#rooms-modal").modal("hide");
+		  $("#panel-container").removeClass("hidden");
+	   });
     };
 
     var initRoomsModal = function() {
@@ -117,6 +125,7 @@ define([
 
     return {
 	   initRoom : initRoom,
+	   updateRoom : updateRoom,
 	   initRoomsModal : initRoomsModal,
     };
 });

@@ -13,6 +13,7 @@ exports.MessageTypes = {
     HEARTBEAT_RESPONSE : "Heartbeat response",
     ROOM_REGISTRATION  : "Room registration",
     CONNECTION_CLOSE   : "Connection close",
+    USER_LIST_CHANGED  : "User list changed",
     HANDSHAKE_ERROR    : "Error",
     SESSION_ERROR      : "Session error",
     HTTP_ERROR         : "HTTP error",
