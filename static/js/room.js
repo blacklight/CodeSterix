@@ -29,6 +29,10 @@ define([
 		  initRoom($(this).data("room-id"));
 	   });
 
+	   $("body").on("click", "#rooms-modal-show", function() {
+		  refreshRoomsModal();
+	   });
+
 	   $("body").on("keyup", "#room-create-input", function(event) {
 		  if (event.keyCode === 13) {
 			 var name = $("#room-create-input").val().trim();
@@ -104,6 +108,10 @@ define([
     var initRoomsModal = function() {
 	   initTemplates();
 	   initBindings();
+	   refreshRoomsModal();
+    };
+
+    var refreshRoomsModal = function() {
 	   $.getJSON("json/get_active_public_rooms.php")
 		  .success(function(rooms) {
 			 rooms.forEach(function(room) {
