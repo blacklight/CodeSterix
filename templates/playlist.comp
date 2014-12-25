@@ -18,6 +18,11 @@
 						  <div class="playlist-item-description">{{description}}</div>
 					   </td>
 				    </tr>
+				    <tr>
+					   <td>
+						  <div class="playlist-item-creator">Added by {{creator_name}} on {{added_at}}</div>
+					   </td>
+				    </tr>
 				</table>
 			 </td>
 		  </tr>

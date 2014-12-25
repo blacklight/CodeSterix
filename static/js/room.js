@@ -100,6 +100,10 @@ define([
 
 		  if (!args || (args && !args.onlyPlayList)) {
 			 window.config.room.users_count = window.config.room.users.length;
+			 window.config.room.users.forEach(function(user) {
+				user.connected_since = Utils.sqlDateToPrettyDate(user.connected_since);
+			 });
+
 			 $("#users-container").html(usersListTemplate(window.config.room));
 			 $("[rel='tooltip']").tooltip();
 		  }

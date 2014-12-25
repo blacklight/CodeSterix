@@ -116,8 +116,8 @@ body {
 }
 
 /***********
-* Search  *
-***********/
+ * Search  *
+ ***********/
 
 .search-track-album-img {
     width: 40px;
@@ -171,8 +171,8 @@ span.search-track-field {
 }
 
 /************
-* Playlist *
-************/
+ * Playlist *
+ ************/
 
 #playlist-container {
     height: 100%;
@@ -180,7 +180,6 @@ span.search-track-field {
 }
 
 .playlist-item-row {
-    height: 60px;
     background-color: #2e3338;
     margin-bottom: 4px;
 }
@@ -192,6 +191,7 @@ span.search-track-field {
 
 .playlist-item-image {
     height: 60px;
+    padding-left: 5px;
 }
 
 .playlist-item-row-right {
@@ -201,6 +201,7 @@ span.search-track-field {
 .playlist-item-name {
     color: #989898;
     font-size: 14px;
+    padding-top: 5px;
 }
 
 .playlist-item-description {
@@ -231,9 +232,14 @@ span.search-track-field {
     vertical-align: middle;
 }
 
+.playlist-item-creator {
+    font-size: 11px;
+    padding-bottom: 5px;
+}
+
 /***************
-* Rooms modal *
-***************/
+ * Rooms modal *
+ ***************/
 
 #rooms-modal .modal-body {
     padding: 0;
@@ -293,9 +299,9 @@ span.search-track-field {
     transition: all 0.5 ease;
 }
 
-/************
+/*********
  * Users *
- ************/
+ *********/
 
 #room-info-header {
     font-size: 13px;

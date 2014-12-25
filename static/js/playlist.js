@@ -9,11 +9,12 @@ requirejs.config({
 
 define("playlist", [
     "jquery",
+    "utils",
     "websocket_client",
     "protocol",
     "lib/handlebars",
     "lib/jquery.text-overflow",
-], function($, WebSocketClient, Protocol, Handlebars) {
+], function($, Utils, WebSocketClient, Protocol, Handlebars) {
     "use strict";
 
     var currentPlaylist = [];
@@ -43,6 +44,7 @@ define("playlist", [
 		  return;
 	   }
 
+	   track.added_at = Utils.sqlDateToPrettyDate(track.added_at);
 	   currentPlaylist.push(track);
 	   videosMap[track.youtube_id] = track;
 

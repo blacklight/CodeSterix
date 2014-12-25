@@ -49,11 +49,28 @@ define("utils", [
 		  + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
     };
 
+    var sqlDateToPrettyDate = function(date) {
+	   var match = date.match(/^\s*(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})\s*/)
+	   if (!match) {
+		  return date;
+	   }
+
+	   var year = parseInt(match[1]);
+	   var month = parseInt(match[2])-1;
+	   var day = parseInt(match[3]);
+	   var hour = parseInt(match[4]);
+	   var minute = parseInt(match[5]);
+	   var second = parseInt(match[6]);
+	   date = new Date(year, month, day, hour, minute, second);
+	   return date.toDateString() + ", " + date.toLocaleTimeString();
+    };
+
     return {
 	   getCookie : getCookie,
 	   getUrlArguments : getUrlArguments,
 	   createUrlFromArguments : createUrlFromArguments,
 	   jsDateToSqlDate : jsDateToSqlDate,
+	   sqlDateToPrettyDate : sqlDateToPrettyDate,
     };
 });
 
