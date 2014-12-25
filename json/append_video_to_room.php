@@ -2,7 +2,9 @@
 
 require_once "../conf.php";
 require_once TONLIST_PATH . "/lib/db/db_track.php";
+require_once TONLIST_PATH . "/lib/db/db_room.php";
 require_once TONLIST_PATH . "/lib/db/db_room_track.php";
+require_once TONLIST_PATH . "/lib/db/db_room_track_history.php";
 
 session_start();
 header('Content-Type: application/json; charset=utf8');
@@ -14,10 +16,10 @@ if (!isset($_SESSION["user"])) {
 
 if (!isset($_REQUEST["room_id"])
 	   || !isset($_REQUEST["youtube_id"])
-	   || !isset($_REQUEST["name"]
-	   || !isset($_REQUEST["description"]
-	   || !isset($_REQUEST["duration"]
-	   || !isset($_REQUEST["image"]) {
+	   || !isset($_REQUEST["name"])
+	   || !isset($_REQUEST["description"])
+	   || !isset($_REQUEST["duration"])
+	   || !isset($_REQUEST["image"])) {
     header('HTTP/1.0 400 Bad Request');
     exit(1);
 }
@@ -42,6 +44,13 @@ $room_track = $_DB["room_track"]->insert(array(
     "creator_user_id"  => $_SESSION["user"]->id,
     "playing"          => 0,
     "playing_done"     => 0,
+));
+
+$_DB["room_track_history"]->insert(array(
+    "room_track_id"    => $room_track->id,
+    "room_id"          => $_REQUEST["room_id"],
+    "youtube_id"       => $_REQUEST["youtube_id"],
+    "creator_user_id"  => $_SESSION["user"]->id,
 ));
 
 print json_encode(array(

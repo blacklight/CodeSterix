@@ -43,6 +43,17 @@ define("playlist", [
 	   if (!Player.isInitialized()) {
 		  Player.initialize(track.id);
 	   }
+
+	   if (window.config.room) {
+		  $.post("json/append_video_to_room.php", {
+			 room_id     : window.config.room.id,
+			 youtube_id  : track.id,
+			 name        : track.name,
+			 description : track.description,
+			 duration    : 300,  // TODO
+			 image       : track.image,
+		  });
+	   }
     };
 
     var updateCurrentIndexByVideoId = function(videoID) {
