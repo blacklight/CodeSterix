@@ -1,11 +1,11 @@
 <?php
 
 require_once "../conf_secret.php";
-
-header('Content-Type: application/json; charset=utf8');
+require_once "adminhandler.php";
 
 if (!isset($_REQUEST["q"]) && !isset($_REQUEST["id"])) {
-    die("Missing required \"q\" or \"id\" argument");
+    header('HTTP/1.0 400 Bad Request');
+    exit(1);
 }
 
 if (isset($_REQUEST["id"])) {

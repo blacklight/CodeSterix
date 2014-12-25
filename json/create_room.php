@@ -1,16 +1,8 @@
 <?php
 
-require_once "../conf.php";
+require_once "adminhandler.php";
 require_once TONLIST_PATH . "/lib/db/db_room.php";
 require_once TONLIST_PATH . "/lib/db/db_room_history.php";
-
-session_start();
-header('Content-Type: application/json; charset=utf8');
-
-if (!isset($_SESSION["user"])) {
-    header('HTTP/1.0 403 Forbidden');
-    exit(1);
-}
 
 if (!isset($_REQUEST["name"]) || $_REQUEST["name"] == "") {
     header('HTTP/1.0 400 Bad Request');

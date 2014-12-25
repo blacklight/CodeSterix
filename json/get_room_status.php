@@ -1,6 +1,6 @@
 <?php
 
-require_once "../conf.php";
+require_once "adminhandler.php";
 require_once TONLIST_PATH . "/lib/db/db_room.php";
 require_once TONLIST_PATH . "/lib/db/db_user.php";
 

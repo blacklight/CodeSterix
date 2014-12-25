@@ -1,18 +1,11 @@
 <?php
 
-require_once "../conf.php";
+require_once "adminhandler.php";
+require_once TONLIST_PATH . "/lib/db/db_user.php";
 require_once TONLIST_PATH . "/lib/db/db_track.php";
 require_once TONLIST_PATH . "/lib/db/db_room.php";
 require_once TONLIST_PATH . "/lib/db/db_room_track.php";
 require_once TONLIST_PATH . "/lib/db/db_room_track_history.php";
-
-session_start();
-header('Content-Type: application/json; charset=utf8');
-
-if (!isset($_SESSION["user"])) {
-    header('HTTP/1.0 403 Forbidden');
-    exit(1);
-}
 
 if (!isset($_REQUEST["room_id"])
 	   || !isset($_REQUEST["youtube_id"])
@@ -51,16 +44,22 @@ $_DB["room_track_history"]->insert(array(
     "creator_user_id"  => $_SESSION["user"]->id,
 ));
 
+$creator = $_DB["user"]->retrieve($room_track->creator_user_id);
+
 print json_encode(array(
     "track" => array(
-	   "youtube_id"      => $track->youtube_id,
-	   "name"            => $track->name,
-	   "description"     => $track->description,
-	   "image"           => $track->image,
-	   "room_id"         => $room_track->room_id,
-	   "creator_user_id" => $room_track->creator_user_id,
-	   "playing"         => $room_track->playing,
-	   "playing_done"    => $room_track->playing_done,
+	   "youtube_id"         => $track->youtube_id,
+	   "name"               => $track->name,
+	   "description"        => $track->description,
+	   "image"              => $track->image,
+	   "room_id"            => $room_track->room_id,
+	   "playing"            => $room_track->playing,
+	   "playing_done"       => $room_track->playing_done,
+	   "added_at"           => $room_track->created_at,
+	   "creator_id"         => !$creator ? null : $creator->id,
+	   "creator_name"       => !$creator ? null : $creator->name,
+	   "creator_given_name" => !$creator ? null : $creator->given_name,
+	   "creator_picture"    => !$creator ? null : $creator->picture,
     )
 ));
 
