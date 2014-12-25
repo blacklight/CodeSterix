@@ -9,7 +9,7 @@
 
 	   <div id="users-list">
 		  {{#each users}}
-			 <div class="users-list-item">
+			 <div class="users-list-item" data-id="{{id}}">
 				<img class="users-list-item-picture" src="{{picture}}" alt="">
 				<span class="users-list-item-name" rel="tooltip"
 				    data-toggle="tooltip" data-placement="bottom"
