@@ -1,2 +1,4 @@
 conf_secret.php
 *.pid
+vendor/
+composer.lock
