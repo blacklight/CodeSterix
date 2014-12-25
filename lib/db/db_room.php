@@ -23,7 +23,8 @@ class DbRoom extends Db {
 	   global $_DB;
 
 	   return $this->query("
-		  SELECT u.name
+		  SELECT u.id
+			  , u.name
 			  , u.given_name
 			  , u.picture
 			  , ur.last_updated_at AS connected_since
