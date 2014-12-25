@@ -69,6 +69,21 @@ CREATE TABLE tonlist_room_track(
     FOREIGN KEY(room_id) REFERENCES tonlist_room(id) ON DELETE CASCADE
 );
 
+DROP TABLE IF EXISTS tonlist_room_track_history;
+CREATE TABLE tonlist_room_track_history(
+    id int(11) unsigned PRIMARY KEY auto_increment,
+    room_track_id int(11) unsigned NOT NULL,
+    room_id mediumint(8) unsigned NOT NULL,
+    youtube_id varchar(32) NOT NULL,
+    creator_user_id int(10) unsigned,
+    created_at timestamp default current_timestamp,
+
+    KEY(room_track_id),
+    KEY(creator_user_id),
+    KEY(youtube_id),
+    KEY(room_id)
+);
+
 DROP TABLE IF EXISTS tonlist_user_room;
 CREATE TABLE tonlist_user_room(
     user_id int(10) unsigned,
