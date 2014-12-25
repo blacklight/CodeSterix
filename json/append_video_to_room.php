@@ -18,7 +18,6 @@ if (!isset($_REQUEST["room_id"])
 	   || !isset($_REQUEST["youtube_id"])
 	   || !isset($_REQUEST["name"])
 	   || !isset($_REQUEST["description"])
-	   || !isset($_REQUEST["duration"])
 	   || !isset($_REQUEST["image"])) {
     header('HTTP/1.0 400 Bad Request');
     exit(1);
@@ -34,7 +33,6 @@ $track = $_DB["track"]->create_track(array(
     "youtube_id"  => $_REQUEST["youtube_id"],
     "name"        => $_REQUEST["name"],
     "description" => $_REQUEST["description"],
-    "duration"    => $_REQUEST["duration"],
     "image"       => $_REQUEST["image"],
 ));
 
@@ -58,7 +56,6 @@ print json_encode(array(
 	   "youtube_id"      => $track->youtube_id,
 	   "name"            => $track->name,
 	   "description"     => $track->description,
-	   "duration"        => $track->duration,
 	   "image"           => $track->image,
 	   "room_id"         => $room_track->room_id,
 	   "creator_user_id" => $room_track->creator_user_id,

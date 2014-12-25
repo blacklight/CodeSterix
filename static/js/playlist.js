@@ -50,7 +50,6 @@ define("playlist", [
 			 youtube_id  : track.id,
 			 name        : track.name,
 			 description : track.description,
-			 duration    : 300,  // TODO
 			 image       : track.image,
 		  });
 	   }

@@ -49,7 +49,6 @@ CREATE TABLE tonlist_track(
     youtube_id varchar(32) PRIMARY KEY NOT NULL,
     name varchar(1024) NOT NULL,
     description text,
-    duration mediumint(8) unsigned NOT NULL default 0,
     image varchar(255),
     created_at timestamp default current_timestamp
 );

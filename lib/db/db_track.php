@@ -8,7 +8,6 @@ class DbTrack extends Db {
 	   "youtube_id",
 	   "name",
 	   "description",
-	   "duration",
 	   "image",
 	   "created_at",
     );
@@ -17,13 +16,11 @@ class DbTrack extends Db {
 
     public function create_track($args) {
 	   $this->query("INSERT INTO $this->table_name "
-		  . "(youtube_id, name, description, duration, image) VALUES "
+		  . "(youtube_id, name, description, image) VALUES "
 		  . "(?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE "
-		  . "name = ?, description = ?, duration = ?, image = ?",
-		  $args["youtube_id"], $args["name"], $args["description"],
-		  $args["duration"], $args["image"],
-		  $args["name"], $args["description"],
-		  $args["duration"], $args["image"]);
+		  . "name = ?, description = ?, image = ?",
+		  $args["youtube_id"], $args["name"], $args["description"], $args["image"],
+		  $args["name"], $args["description"], $args["image"]);
 
 	   $ret = $this->query("SELECT * FROM $this->table_name WHERE youtube_id = ?",
 		  $args["youtube_id"]);
