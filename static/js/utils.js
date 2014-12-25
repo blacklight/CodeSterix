@@ -29,13 +29,15 @@ define("utils", [
     var createUrlFromArguments = function(args) {
 	   var argString = "";
 
-	   Object.keys(args).forEach(function(key) {
-		  if (argString !== "") {
-			 argString += ";";
-		  }
+	   if (args) {
+		  Object.keys(args).forEach(function(key) {
+			 if (argString !== "") {
+				argString += ";";
+			 }
 
-		  argString += key + "=" + args[key];
-	   });
+			 argString += key + "=" + args[key];
+		  });
+	   }
 
 	   var match = window.location.href.match("^(.+)#");
 	   var baseUrl = match ? match[1] : window.location.href;
