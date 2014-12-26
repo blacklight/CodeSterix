@@ -40,21 +40,41 @@ define("websocket_client", [
 		  $.toaster({ priority: 'warning', title: 'WebSocket error', message: message.payload.errorMessage, settings: { timeout: 5000 } });
 	   }
 
-	   if (message.msgType === Protocol.MessageTypes.HANDSHAKE_RESPONSE && message.payload) {
-		  socketID = message.payload.socketID;
-	   } else if (message.msgType === Protocol.MessageTypes.USER_LIST_CHANGED && message.payload) {
-		  if (window.config.room) {
-			 require("room").updateRoom(window.config.room.id, { onlyUsersList: true });
-		  }
-	   } else if (message.msgType === Protocol.MessageTypes.PLAYLIST_CHANGED && message.payload) {
-		  if (window.config.room) {
-			 require("room").updateRoom(window.config.room.id, { onlyPlayList: true });
-		  }
-	   } else if (message.msgType === Protocol.MessageTypes.HEARTBEAT_REQUEST) {
-		  ws.send(JSON.stringify({
-			 msgType  : Protocol.MessageTypes.HEARTBEAT_RESPONSE,
-			 socketID : socketID,
-		  }));
+	   switch (message.msgType) {
+		  case Protocol.MessageTypes.HANDSHAKE_RESPONSE:
+			 socketID = message.payload.socketID;
+			 break;
+
+		  case Protocol.MessageTypes.USER_LIST_CHANGED:
+			 if (window.config.room) {
+				require("room").updateRoom(window.config.room.id, { onlyUsersList: true });
+			 }
+			 break;
+
+		  case Protocol.MessageTypes.PLAYLIST_CHANGED:
+			 if (window.config.room) {
+				require("room").updateRoom(window.config.room.id, { onlyPlayList: true });
+			 }
+			 break;
+
+		  case Protocol.MessageTypes.VIDEO_PLAY:
+			 if (message.payload && message.payload.youtubeID) {
+				require("player").loadVideoById(message.payload.youtubeID);
+			 } else {
+				require("player").playVideo();
+			 }
+			 break;
+
+		  case Protocol.MessageTypes.VIDEO_PAUSE:
+			 require("player").pauseVideo();
+			 break;
+
+		  case Protocol.MessageTypes.HEARTBEAT_REQUEST:
+			 ws.send(JSON.stringify({
+				msgType  : Protocol.MessageTypes.HEARTBEAT_RESPONSE,
+				socketID : socketID,
+			 }));
+			 break;
 	   }
     };
 

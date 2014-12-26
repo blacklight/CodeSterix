@@ -24,6 +24,7 @@
 	   this.clients = [];
 	   this.clientsMap = {};
 	   this.rooms = {};
+	   this.roomVideos = {};
 	   this.pendingHeartbeatTimeouts = {};
 	   this.heartBeatInterval = Protocol.HeartBeatInterval;
 	   this.heartBeatTimeout = Protocol.HeartBeatTimeout;
@@ -58,6 +59,12 @@
 				    break;
 				case "PLAYLIST_CHANGED":
 				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onPlaylistChanged);
+				    break;
+				case "VIDEO_PLAY":
+				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onVideoPlay);
+				    break;
+				case "VIDEO_PAUSE":
+				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onVideoPause);
 				    break;
 			 }
 		  });
@@ -184,10 +191,11 @@
 
 		  if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_RESPONSE) {
 			 logger.debug(JSON.stringify({
-				remoteAddress : ws._socket.remoteAddress,
-				remotePort : ws._socket.remotePort,
+				remoteAddress : ws._socket ? ws._socket.remoteAddress : undefined,
+				remotePort : ws._socket ? ws._socket.remotePort : undefined,
 				socketID : message.socketID || undefined,
-				message : JSON.stringify(message),
+				action : "Message IN",
+				message : message,
 			 }));
 		  }
 
@@ -275,24 +283,16 @@
 	   };
 
 	   var onRoomRegistration = function(ws, message) {
+		  if (!checkMessageIntegrity(ws, message)) {
+			 return;
+		  }
+
 		  if (!message.payload || !message.payload.roomID) {
 			 sendMessage(ws, {
 				msgType : Protocol.MessageTypes.ERROR,
 				error   : true,
 				payload : {
 				    errorMessage : "No roomID specified in the payload",
-				},
-			 });
-
-			 return;
-		  }
-
-		  if (!message.socketID || !(message.socketID in self.clientsMap)) {
-			 sendMessage(ws, {
-				msgType : Protocol.MessageTypes.ERROR,
-				error   : true,
-				payload : {
-				    errorMessage : "No socketID specified or socketID not registered",
 				},
 			 });
 
@@ -307,17 +307,158 @@
 		  self.rooms[ws.roomID][message.socketID] = ws;
 
 		  logger.info(JSON.stringify({
-			 remoteAddress : ws._socket.remoteAddress,
-			 remotePort : ws._socket.remotePort,
 			 socketID : message.socketID,
-			 action : Protocol.MessageTypes.ROOM_REGISTRATION,
-			 message : "{roomID:" + ws.roomID + "}",
+			 messageType : Protocol.MessageTypes.ROOM_REGISTRATION,
+			 message : JSON.stringify({ roomID : ws.roomID }),
 		  }));
 
 		  notifyUserListChanged(ws.roomID);
 	   };
 
 	   var onPlaylistChanged = function(ws, message) {
+		  if (!checkMessageIntegrity(ws, message)) {
+			 return;
+		  }
+
+		  var roomID = self.clientsMap[message.socketID].roomID;
+		  logger.info(JSON.stringify({
+			 socketID : message.socketID,
+			 messageType : Protocol.MessageTypes.PLAYLIST_CHANGED,
+			 message : JSON.stringify({ roomID : ws.roomID }),
+		  }));
+
+		  notifyPlayListChanged(roomID);
+	   };
+
+	   var onVideoPlay = function(ws, message) {
+		  if (!checkMessageIntegrity(ws, message)) {
+			 return;
+		  }
+
+		  if (!message.payload || !message.payload.youtubeID) {
+			 sendMessage(ws, {
+				msgType : Protocol.MessageTypes.ERROR,
+				error   : true,
+				payload : {
+				    errorMessage : "No youtubeID specified",
+				},
+			 });
+
+			 return false;
+		  }
+
+		  var roomID = self.clientsMap[message.socketID].roomID;
+		  if (self.roomVideos[roomID]
+				&& self.roomVideos[roomID].youtubeID === message.payload.youtubeID) {
+			 if (self.roomVideos[roomID].state === Protocol.VideoStatus.PLAY) {
+				return;
+			 }
+
+			 logger.info(JSON.stringify({
+				messageType : Protocol.MessageTypes.VIDEO_RESUME,
+				socketID : ws.socketID,
+				message : JSON.stringify({
+				    roomID : roomID,
+				    youtubeID : message.payload.youtubeID,
+				}),
+			 }));
+
+
+			 self.roomVideos[roomID].state = Protocol.VideoStatus.PLAY;
+
+			 Object.keys(self.rooms[roomID]).forEach(function(socketID) {
+				var sock = self.rooms[roomID][socketID];
+				if (sock.socketID === ws.socketID) {
+				    return;
+				}
+
+				sendMessage(sock, {
+				    msgType : Protocol.MessageTypes.VIDEO_PLAY,
+				    payload : { },
+				});
+			 });
+
+			 return;
+		  }
+
+		  $.getJSON(
+			   Config.httpProtocol
+			 + "://"
+			 + Config.httpHost
+			 + "/" + Config.httpURI
+			 + "/json/change_playing_video.php", {
+				room_id    : roomID,
+				session_id : ws.sessionID,
+				youtube_id : message.payload.youtubeID,
+		  })
+		  .success(function() {
+			 logger.info(JSON.stringify({
+				messageType : Protocol.MessageTypes.VIDEO_PLAY,
+				socketID : ws.socketID,
+				message : JSON.stringify({
+				    roomID : roomID,
+				    youtubeID : message.payload.youtubeID,
+				}),
+			 }));
+
+			 var video = {
+				youtubeID : message.payload.youtubeID,
+				state     : Protocol.VideoStatus.PLAY,
+				seek      : 0,
+			 };
+
+			 self.roomVideos[roomID] = video;
+
+			 Object.keys(self.rooms[roomID]).forEach(function(socketID) {
+				var sock = self.rooms[roomID][socketID];
+				sendMessage(sock, {
+				    msgType : Protocol.MessageTypes.VIDEO_PLAY,
+				    payload : video,
+				});
+			 });
+		  })
+		  .error(function(jqxhr, state, error) {
+			 logger.error(JSON.stringify({
+				socketID : ws.socketID,
+				event : "AJAX change_playing_video.php",
+				ajax : jqxhr,
+				state : state,
+				error: error,
+			 }));
+		  });
+	   };
+
+	   var onVideoPause = function(ws, message) {
+		  if (!checkMessageIntegrity(ws, message)) {
+			 return;
+		  }
+
+		  var roomID = self.clientsMap[message.socketID].roomID;
+		  if (self.roomVideos[roomID]
+				&& self.roomVideos[roomID].state === Protocol.VideoStatus.PAUSE) {
+			 return;
+		  }
+
+		  logger.info(JSON.stringify({
+			 messageType : Protocol.MessageTypes.VIDEO_PAUSE,
+			 socketID : ws.socketID,
+			 message : JSON.stringify({
+				roomID : roomID,
+			 }),
+		  }));
+
+		  self.roomVideos[roomID].state = Protocol.VideoStatus.PAUSE;
+
+		  Object.keys(self.rooms[roomID]).forEach(function(socketID) {
+			 var sock = self.rooms[roomID][socketID];
+			 sendMessage(sock, {
+				msgType : Protocol.MessageTypes.VIDEO_PAUSE,
+				payload : { },
+			 });
+		  });
+	   };
+
+	   var checkMessageIntegrity = function(ws, message) {
 		  if (!message.socketID || !(message.socketID in self.clientsMap)) {
 			 sendMessage(ws, {
 				msgType : Protocol.MessageTypes.ERROR,
@@ -327,19 +468,10 @@
 				},
 			 });
 
-			 return;
+			 return false;
 		  }
 
-		  var roomID = self.clientsMap[message.socketID].roomID;
-		  logger.info(JSON.stringify({
-			 remoteAddress : ws._socket.remoteAddress,
-			 remotePort : ws._socket.remotePort,
-			 socketID : message.socketID,
-			 action : Protocol.MessageTypes.PLAYLIST_CHANGED,
-			 message : "{roomID:" + roomID + "}",
-		  }));
-
-		  notifyPlayListChanged(roomID);
+		  return true;
 	   };
 
 	   var sendMessage = function(ws, message) {

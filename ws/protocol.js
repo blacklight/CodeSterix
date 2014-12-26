@@ -15,9 +15,22 @@ exports.MessageTypes = {
     CONNECTION_CLOSE   : "Connection close",
     USER_LIST_CHANGED  : "User list changed",
     PLAYLIST_CHANGED   : "Playlist changed",
+    VIDEO_PLAY         : "Video play",
+    VIDEO_PAUSE        : "Video pause",
+    VIDEO_RESUME       : "Video resume",
+    VIDEO_END          : "Video end",
     HANDSHAKE_ERROR    : "Error",
     SESSION_ERROR      : "Session error",
     HTTP_ERROR         : "HTTP error",
+};
+
+exports.VideoStatus = {
+    PLAY      : "Play",
+    PAUSE     : "Pause",
+    END       : "End",
+    UNSTARTED : "Unstarted",
+    CUE       : "Cue",
+    BUFFER    : "Buffer",
 };
 
 exports.HeartBeatTimeout = 2000;

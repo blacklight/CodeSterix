@@ -148,6 +148,18 @@ class Db extends PDO {
     public function insert_ignore($tuple) {
 	   $this->insert($tuple, array( "ignore" => 1 ));
     }
+
+    public function start_transaction() {
+	   $this->query("START TRANSACTION");
+    }
+
+    public function commit() {
+	   $this->query("COMMIT");
+    }
+
+    public function rollback() {
+	   $this->query("ROLLBACK");
+    }
 }
 
 $_DB = array();

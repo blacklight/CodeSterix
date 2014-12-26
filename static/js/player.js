@@ -1,13 +1,15 @@
 define("player", [
     "jquery",
     "playlist",
+    "websocket_client",
+    "protocol",
     "lib/jquery.tube",
     "lib/bootstrap",
-], function($, Playlist) {
+], function($, Playlist, WebSocketClient, Protocol) {
     "use strict";
 
-    var $video;
-    var initialized = false;
+    var $video,
+	   initialized = false;
 
     var initialize = function(videoID) {
 	   initialized = true;
@@ -32,12 +34,46 @@ define("player", [
 				    self.loadVideoById(nextVideo.id);
 				}
 			 },
+
+			 play: function(event) {
+				var videoData = $video.p.getVideoData();
+				WebSocketClient.send({
+				    msgType : Protocol.MessageTypes.VIDEO_PLAY,
+				    payload : {
+					   youtubeID : videoData.video_id
+				    }
+				});
+			 },
+
+			 unstarted: function(event) {
+			 },
+
+			 pause: function(event) {
+				WebSocketClient.send({
+				    msgType : Protocol.MessageTypes.VIDEO_PAUSE,
+				    payload : { }
+				});
+			 },
+
+			 cue: function(event) {
+			 },
+
+			 buffer: function(event) {
+			 },
 		  }
 	   });
     };
 
     var isInitialized = function() {
 	   return initialized;
+    };
+
+    var pauseVideo = function() {
+	   $video.p.pauseVideo();
+    };
+
+    var playVideo = function() {
+	   $video.p.playVideo();
     };
 
     var loadVideoById = function(videoID) {
@@ -49,6 +85,8 @@ define("player", [
 	   initialize: initialize,
 	   isInitialized: isInitialized,
 	   loadVideoById: loadVideoById,
+	   pauseVideo: pauseVideo,
+	   playVideo: playVideo,
     };
 });
 

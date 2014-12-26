@@ -59,8 +59,25 @@ class DbRoom extends Db {
 		    JOIN " . $_DB["track"]->get_table_name() . " t
 			 ON rt.youtube_id = t.youtube_id
 		   WHERE rt.room_id = ?
-		     AND playing_done = 0",
+			AND playing_done = 0
+		   ORDER BY rt.created_at",
 		  $room_id);
+    }
+
+    public function change_playing_video($room_id, $youtube_id) {
+	   global $_DB;
+
+	   $this->start_transaction();
+
+	   $this->query("UPDATE " . $_DB["room_track"]->get_table_name() .
+		  " SET playing = 0 WHERE playing = 1 AND room_id = ?",
+		  $room_id);
+
+	   $this->query("UPDATE " . $_DB["room_track"]->get_table_name() .
+		  " SET playing = 1 WHERE room_id = ? AND youtube_id = ?",
+		  $room_id, $youtube_id);
+
+	   $this->commit();
     }
 }
 

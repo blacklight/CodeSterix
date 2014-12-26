@@ -206,6 +206,7 @@ span.search-track-field {
 
 .playlist-item-description {
     font-size: 13px;
+    padding-right: 5px;
 }
 
 .empty-playlist {
