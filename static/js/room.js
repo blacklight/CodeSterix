@@ -120,9 +120,10 @@ define([
 	   refreshRoomsModal();
     };
 
-    var refreshRoomsModal = function(args) {
+    var refreshRoomsModal = function(opts) {
 	   $.getJSON("json/get_active_public_rooms.php")
 		  .success(function(rooms) {
+			 rooms.sort(function(a, b) { return a.online_users < b.online_users; });
 			 rooms.forEach(function(room) {
 				room.online_users = room.users.length + " online users";
 				room.created_at = Utils.sqlDateToPrettyDate(room.created_at);
@@ -130,7 +131,7 @@ define([
 
 			 $("#rooms-modal-container").html(roomsModalTemplate({ rooms : rooms }));
 
-			 if (!args["room_id"] || (args && args.forceShow)) {
+			 if (!args["room_id"] || (opts && opts.forceShow)) {
 				$("#rooms-modal").modal({
 				    backdrop: "static",
 				    keyboard: false,
