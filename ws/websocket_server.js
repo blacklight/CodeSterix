@@ -141,6 +141,7 @@
 
 					   Object.keys(self.rooms[ws.roomID]).forEach(function(socketID) {
 						  var sock = self.rooms[ws.roomID][socketID];
+						  sock.seekPerformed = true;
 						  sendMessage(sock, {
 							 msgType    : Protocol.MessageTypes.VIDEO_SEEK,
 							 payload    : {
@@ -148,10 +149,90 @@
 							 },
 						  });
 					   });
+
+					   return;
 				    }
 				}
 
 				ws.playerStatus = newStatus;
+
+				// If there was no seek backward/forward since last heartbeat,
+				// wait for all the clients in the room to reply to this round
+				// of heartbeat messages with their current playing time statistics
+				var allRoomHeartbeatsReceived = true;
+				var allWatchingSameItem = true;
+				var seekPreviouslyPerformed = false;
+				var avgSeekTime = 0;
+				var minSeekTime = 9999999;
+				var maxSeekTime = 0;
+				var nRoomClients = 0;
+
+				Object.keys(self.rooms[ws.roomID]).forEach(function(socketID) {
+				    var sock = self.rooms[ws.roomID][socketID];
+				    if (self.pendingHeartbeatTimeouts[sock.socketID]) {
+					   allRoomHeartbeatsReceived = false;
+					   return;
+				    }
+
+				    if (!sock.playerStatus) {
+					   allWatchingSameItem = false;
+					   return;
+				    }
+
+				    if (sock.playerStatus.youtubeID !== newStatus.youtubeID) {
+					   allWatchingSameItem = false;
+					   return;
+				    }
+
+				    if (sock.seekPerformed) {
+					   seekPreviouslyPerformed = true;
+					   return;
+				    }
+
+				    if (sock.playerStatus.time < minSeekTime) {
+					   minSeekTime = sock.playerStatus.time;
+				    }
+
+				    if (sock.playerStatus.time > maxSeekTime) {
+					   maxSeekTime = sock.playerStatus.time;
+				    }
+
+				    avgSeekTime += sock.playerStatus.time;
+				    nRoomClients++;
+				});
+
+				if (allRoomHeartbeatsReceived && allWatchingSameItem) {
+				    avgSeekTime /= nRoomClients;
+				    var seekCorrectionTolerance = 0.5;
+				    var smallCorrectionThreshold = 5;
+
+				    // If the time offset among the players in the room
+				    // is above a certain tolerance, but not big enough
+				    // to justify the players ahead to be paused and wait,
+				    // apply a seek correction using the average seek time
+				    if (maxSeekTime - minSeekTime > seekCorrectionTolerance
+						  && seekCorrectionTolerance <= smallCorrectionThreshold
+						  && !seekPreviouslyPerformed) {
+					   logger.info(JSON.stringify({
+						  messageType   : Protocol.MessageTypes.SEEK_CORRECTION,
+						  message       : JSON.stringify({
+							 roomID    : ws.roomID,
+							 youtubeID : newStatus.youtubeID,
+							 seekTo    : avgSeekTime,
+						  }),
+					   }));
+
+					   Object.keys(self.rooms[ws.roomID]).forEach(function(socketID) {
+						  var sock = self.rooms[ws.roomID][socketID];
+						  sendMessage(sock, {
+							 msgType    : Protocol.MessageTypes.VIDEO_SEEK,
+							 payload    : {
+								seekTo : avgSeekTime,
+							 },
+						  });
+					   });
+				    }
+				}
 			 }
 		  }
 	   };
