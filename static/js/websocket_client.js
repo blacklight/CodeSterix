@@ -69,11 +69,17 @@ define("websocket_client", [
 			 require("player").pauseVideo();
 			 break;
 
+		  case Protocol.MessageTypes.VIDEO_SEEK:
+			 require("player").seekTo(message.payload.seekTo);
+			 break;
+
 		  case Protocol.MessageTypes.HEARTBEAT_REQUEST:
-			 ws.send(JSON.stringify({
+			 send({
 				msgType  : Protocol.MessageTypes.HEARTBEAT_RESPONSE,
-				socketID : socketID,
-			 }));
+				payload  : {
+				    playerStatus : require("player").getCurrentStatus(),
+				},
+			 });
 			 break;
 	   }
     };

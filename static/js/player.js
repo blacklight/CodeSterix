@@ -76,17 +76,63 @@ define("player", [
 	   $video.p.playVideo();
     };
 
+    var seekTo = function(seek) {
+	   $video.p.seekTo(seek);
+    };
+
     var loadVideoById = function(videoID) {
 	   $video.p.loadVideoById(videoID);
 	   Playlist.updateCurrentIndexByVideoId(videoID);
     };
 
+    var getCurrentStatus = function() {
+	   if (!$video || !$video.p) {
+		  return undefined;
+	   }
+
+	   var videoData = $video.p.getVideoData();
+	   if (!videoData) {
+		  return undefined;
+	   }
+
+	   var currentTime = $video.p.getCurrentTime();
+	   var playerState = $video.p.getPlayerState();
+	   switch (playerState) {
+		  case -1:
+			 playerState = Protocol.VideoStatus.UNSTARTED;
+			 break;
+		  case 0:
+			 playerState = Protocol.VideoStatus.END;
+			 break;
+		  case 1:
+			 playerState = Protocol.VideoStatus.PLAY;
+			 break;
+		  case 2:
+			 playerState = Protocol.VideoStatus.PAUSE;
+			 break;
+		  case 3:
+			 playerState = Protocol.VideoStatus.BUFFER;
+			 break;
+		  case 5:
+			 playerState = Protocol.VideoStatus.CUE;
+			 break;
+	   }
+
+	   return {
+		  youtubeID : videoData.video_id,
+		  time      : currentTime,
+		  status    : playerState,
+	   };
+    };
+
     return {
+	   getCurrentStatus: getCurrentStatus,
 	   initialize: initialize,
 	   isInitialized: isInitialized,
 	   loadVideoById: loadVideoById,
 	   pauseVideo: pauseVideo,
 	   playVideo: playVideo,
+	   seekTo: seekTo,
     };
 });
 

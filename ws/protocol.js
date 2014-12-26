@@ -19,6 +19,7 @@ exports.MessageTypes = {
     VIDEO_PAUSE        : "Video pause",
     VIDEO_RESUME       : "Video resume",
     VIDEO_END          : "Video end",
+    VIDEO_SEEK         : "Video seek",
     HANDSHAKE_ERROR    : "Error",
     SESSION_ERROR      : "Session error",
     HTTP_ERROR         : "HTTP error",

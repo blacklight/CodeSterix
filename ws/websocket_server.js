@@ -108,6 +108,51 @@
 		  if (ws.socketID && self.pendingHeartbeatTimeouts[ws.socketID]) {
 			 clearTimeout(self.pendingHeartbeatTimeouts[ws.socketID]);
 			 delete self.pendingHeartbeatTimeouts[ws.socketID];
+
+			 if (!ws.roomID) {
+				return;
+			 }
+
+			 var currentStatus;
+			 if (ws.playerStatus) {
+				currentStatus = ws.playerStatus;
+			 }
+
+			 if (message.payload && message.payload.playerStatus) {
+				var newStatus = message.payload.playerStatus;
+				if (currentStatus) {
+				    // Workaround for capturing seek events. Since YouTube IFrame API
+				    // doesn't provide listeners on seek events, we poll the clients
+				    // on heartbeat messages and try to find out unexpected
+				    // currentTime differences
+				    if (currentStatus.youtubeID === newStatus.youtubeID
+						  && newStatus.status === Protocol.VideoStatus.PLAY
+						  && Math.abs(currentStatus.time - newStatus.time)
+							 - (Protocol.HeartBeatInterval/1000) > 1) {
+					   logger.info(JSON.stringify({
+						  socketID      : ws.socketID,
+						  messageType   : Protocol.MessageTypes.VIDEO_SEEK,
+						  message       : JSON.stringify({
+							 roomID    : ws.roomID,
+							 youtubeID : newStatus.youtubeID,
+							 seekTo    : newStatus.time,
+						  }),
+					   }));
+
+					   Object.keys(self.rooms[ws.roomID]).forEach(function(socketID) {
+						  var sock = self.rooms[ws.roomID][socketID];
+						  sendMessage(sock, {
+							 msgType    : Protocol.MessageTypes.VIDEO_SEEK,
+							 payload    : {
+								seekTo : newStatus.time,
+							 },
+						  });
+					   });
+				    }
+				}
+
+				ws.playerStatus = newStatus;
+			 }
 		  }
 	   };
 
