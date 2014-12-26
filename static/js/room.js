@@ -30,7 +30,7 @@ define([
 	   });
 
 	   $("body").on("click", "#rooms-modal-show", function() {
-		  refreshRoomsModal();
+		  refreshRoomsModal({ forceShow: true });
 	   });
 
 	   $("body").on("keyup", "#room-create-input", function(event) {
@@ -120,16 +120,17 @@ define([
 	   refreshRoomsModal();
     };
 
-    var refreshRoomsModal = function() {
+    var refreshRoomsModal = function(args) {
 	   $.getJSON("json/get_active_public_rooms.php")
 		  .success(function(rooms) {
 			 rooms.forEach(function(room) {
 				room.online_users = room.users.length + " online users";
+				room.created_at = Utils.sqlDateToPrettyDate(room.created_at);
 			 });
 
 			 $("#rooms-modal-container").html(roomsModalTemplate({ rooms : rooms }));
 
-			 if (!args["room_id"]) {
+			 if (!args["room_id"] || (args && args.forceShow)) {
 				$("#rooms-modal").modal({
 				    backdrop: "static",
 				    keyboard: false,
