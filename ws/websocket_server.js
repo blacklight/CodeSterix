@@ -150,6 +150,7 @@
 						  });
 					   });
 
+					   ws.playerStatus = newStatus;
 					   return;
 				    }
 				}
@@ -450,21 +451,14 @@
 			 message : JSON.stringify({ roomID : ws.roomID }),
 		  }));
 
-		  if (self.roomVideos[ws.roomID]) {
-			 logger.info("*** SEEK: " + self.roomVideos[ws.roomID].seek);
-			 logger.info("*** OFFSET: " + (new Date().getTime() - self.roomVideos[ws.roomID].sampledAt)/1000);
-			 logger.info("*** RESULT: " + self.roomVideos[ws.roomID].seek
-				+ (new Date().getTime() - self.roomVideos[ws.roomID].sampledAt)/1000);
-		  }
-
 		  sendMessage(ws, {
 			 msgType : Protocol.MessageTypes.ROOM_SYNC,
 			 payload : {
 				currentStatus : !self.roomVideos[ws.roomID] ? undefined : {
 				    youtubeID : self.roomVideos[ws.roomID].youtubeID,
 				    status    : self.roomVideos[ws.roomID].status,
-				    seek      : self.roomVideos[ws.roomID].seek
-					   + (new Date().getTime() - self.roomVideos[ws.roomID].sampledAt)/1000,
+				    seek      : parseInt(self.roomVideos[ws.roomID].seek)
+					   + (new Date().getTime() - parseInt(self.roomVideos[ws.roomID].sampledAt))/1000,
 				    sampledAt : self.roomVideos[ws.roomID].sampledAt,
 				},
 			 },
