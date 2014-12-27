@@ -203,15 +203,27 @@
 
 				if (allRoomHeartbeatsReceived && allWatchingSameItem) {
 				    avgSeekTime /= nRoomClients;
-				    var seekCorrectionTolerance = 0.5;
+				    var seekCorrectionTolerance = 1;
 				    var smallCorrectionThreshold = 5;
+
+				    if (!self.roomVideos[ws.roomID]) {
+					   self.roomVideos[ws.roomID] = {
+						  youtubeID : message.payload.youtubeID,
+						  status    : ws.playerStatus.status,
+						  seek      : avgSeekTime,
+						  sampledAt : new Date().getTime(),
+					   };
+				    } else {
+					   self.roomVideos[ws.roomID].seek = avgSeekTime;
+					   self.roomVideos[ws.roomID].sampledAt = new Date().getTime();
+				    }
 
 				    // If the time offset among the players in the room
 				    // is above a certain tolerance, but not big enough
 				    // to justify the players ahead to be paused and wait,
 				    // apply a seek correction using the average seek time
 				    if (maxSeekTime - minSeekTime > seekCorrectionTolerance
-						  && seekCorrectionTolerance <= smallCorrectionThreshold
+						  && maxSeekTime - minSeekTime <= smallCorrectionThreshold
 						  && !seekPreviouslyPerformed) {
 					   logger.info(JSON.stringify({
 						  messageType   : Protocol.MessageTypes.SEEK_CORRECTION,
@@ -438,6 +450,26 @@
 			 message : JSON.stringify({ roomID : ws.roomID }),
 		  }));
 
+		  if (self.roomVideos[ws.roomID]) {
+			 logger.info("*** SEEK: " + self.roomVideos[ws.roomID].seek);
+			 logger.info("*** OFFSET: " + (new Date().getTime() - self.roomVideos[ws.roomID].sampledAt)/1000);
+			 logger.info("*** RESULT: " + self.roomVideos[ws.roomID].seek
+				+ (new Date().getTime() - self.roomVideos[ws.roomID].sampledAt)/1000);
+		  }
+
+		  sendMessage(ws, {
+			 msgType : Protocol.MessageTypes.ROOM_SYNC,
+			 payload : {
+				currentStatus : !self.roomVideos[ws.roomID] ? undefined : {
+				    youtubeID : self.roomVideos[ws.roomID].youtubeID,
+				    status    : self.roomVideos[ws.roomID].status,
+				    seek      : self.roomVideos[ws.roomID].seek
+					   + (new Date().getTime() - self.roomVideos[ws.roomID].sampledAt)/1000,
+				    sampledAt : self.roomVideos[ws.roomID].sampledAt,
+				},
+			 },
+		  });
+
 		  notifyUserListChanged(ws.roomID);
 	   };
 
@@ -476,7 +508,7 @@
 		  var roomID = self.clientsMap[message.socketID].roomID;
 		  if (self.roomVideos[roomID]
 				&& self.roomVideos[roomID].youtubeID === message.payload.youtubeID) {
-			 if (self.roomVideos[roomID].state === Protocol.VideoStatus.PLAY) {
+			 if (self.roomVideos[roomID].status === Protocol.VideoStatus.PLAY) {
 				return;
 			 }
 
@@ -490,7 +522,8 @@
 			 }));
 
 
-			 self.roomVideos[roomID].state = Protocol.VideoStatus.PLAY;
+			 self.roomVideos[roomID].status = Protocol.VideoStatus.PLAY;
+			 self.roomVideos[roomID].sampledAt = new Date().getTime();
 
 			 Object.keys(self.rooms[roomID]).forEach(function(socketID) {
 				var sock = self.rooms[roomID][socketID];
@@ -529,14 +562,19 @@
 
 			 var video = {
 				youtubeID : message.payload.youtubeID,
-				state     : Protocol.VideoStatus.PLAY,
+				status    : Protocol.VideoStatus.PLAY,
 				seek      : 0,
+				sampledAt : new Date().getTime(),
 			 };
 
 			 self.roomVideos[roomID] = video;
 
 			 Object.keys(self.rooms[roomID]).forEach(function(socketID) {
 				var sock = self.rooms[roomID][socketID];
+				if (sock.socketID === ws.socketID) {
+				    return;
+				}
+
 				sendMessage(sock, {
 				    msgType : Protocol.MessageTypes.VIDEO_PLAY,
 				    payload : video,
@@ -561,7 +599,7 @@
 
 		  var roomID = self.clientsMap[message.socketID].roomID;
 		  if (self.roomVideos[roomID]
-				&& self.roomVideos[roomID].state === Protocol.VideoStatus.PAUSE) {
+				&& self.roomVideos[roomID].status === Protocol.VideoStatus.PAUSE) {
 			 return;
 		  }
 
@@ -573,10 +611,14 @@
 			 }),
 		  }));
 
-		  self.roomVideos[roomID].state = Protocol.VideoStatus.PAUSE;
+		  self.roomVideos[roomID].status = Protocol.VideoStatus.PAUSE;
 
 		  Object.keys(self.rooms[roomID]).forEach(function(socketID) {
 			 var sock = self.rooms[roomID][socketID];
+			 if (sock.socketID === ws.socketID) {
+				return;
+			 }
+
 			 sendMessage(sock, {
 				msgType : Protocol.MessageTypes.VIDEO_PAUSE,
 				payload : { },

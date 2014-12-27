@@ -11,7 +11,7 @@ define("player", [
     var $video,
 	   initialized = false;
 
-    var initialize = function(videoID) {
+    var initialize = function(videoID, args) {
 	   initialized = true;
 	   var self = this;
 
@@ -25,13 +25,16 @@ define("player", [
 			 ready: function() {
 				$video = $("#player-tube").data("player");
 				$("#player-loading-video").addClass("hidden");
-				self.loadVideoById(videoID);
+
+				if (!args || (args && !args.onlyAppend)) {
+				    self.loadVideoById(videoID, args && args.seek ? args.seek : 0);
+				}
 			 },
 
 			 end: function(event) {
 				var nextVideo = Playlist.getNextVideo();
 				if (nextVideo) {
-				    self.loadVideoById(nextVideo.id);
+				    self.loadVideoById(nextVideo.youtube_id);
 				}
 			 },
 
@@ -80,9 +83,13 @@ define("player", [
 	   $video.p.seekTo(seek);
     };
 
-    var loadVideoById = function(videoID) {
+    var loadVideoById = function(videoID, seek) {
 	   $video.p.loadVideoById(videoID);
 	   Playlist.updateCurrentIndexByVideoId(videoID);
+
+	   if (seek) {
+		  seekTo(seek);
+	   }
     };
 
     var getCurrentStatus = function() {

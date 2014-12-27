@@ -69,7 +69,7 @@ define([
 				}
 			 });
 
-			 updateRoom(roomID);
+			 updateRoom(roomID, { init: true });
 		  })
 		  .error(function() {
 			 $("#rooms-modal").modal("show");
@@ -78,7 +78,7 @@ define([
 	   }
     };
 
-    var updateRoom = function(roomID, args) {
+    var updateRoom = function(roomID, opts) {
 	   $.getJSON("json/get_room_status.php", {
 		  room_id : roomID
 	   })
@@ -90,15 +90,15 @@ define([
 
 		  var position = 0;
 
-		  if (!args || (args && !args.onlyUsersList)) {
+		  if (!opts || (opts && !opts.onlyUsersList)) {
 			 Playlist.clear();
 			 window.config.room.tracks.forEach(function(track) {
 				track.position = position++;
-				Playlist.append(track);
+				Playlist.append(track, { onlyAppend: (opts && opts.init ? true : false) });
 			 });
 		  }
 
-		  if (!args || (args && !args.onlyPlayList)) {
+		  if (!opts || (opts && !opts.onlyPlayList)) {
 			 window.config.room.created_at = Utils.sqlDateToPrettyDate(window.config.room.created_at);
 			 window.config.room.users_count = window.config.room.users.length;
 			 window.config.room.users.forEach(function(user) {

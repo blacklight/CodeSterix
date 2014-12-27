@@ -45,6 +45,19 @@ define("websocket_client", [
 			 socketID = message.payload.socketID;
 			 break;
 
+		  case Protocol.MessageTypes.ROOM_SYNC:
+			 if (!message.payload.currentStatus) {
+				break;
+			 }
+
+			 if (message.payload.currentStatus.status === Protocol.VideoStatus.PLAY) {
+				require("player").initialize(message.payload.currentStatus.youtubeID, {
+				    seek: message.payload.currentStatus.seek
+				});
+			 }
+
+			 break;
+
 		  case Protocol.MessageTypes.USER_LIST_CHANGED:
 			 if (window.config.room) {
 				require("room").updateRoom(window.config.room.id, { onlyUsersList: true });

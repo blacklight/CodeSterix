@@ -50,7 +50,7 @@ define("playlist", [
 
 	   var Player = require("player");
 	   if (!Player.isInitialized()) {
-		  Player.initialize(track.youtube_id);
+		  Player.initialize(track.youtube_id, args);
 	   }
 
 	   if (!args || !args.appendToRoom) {
