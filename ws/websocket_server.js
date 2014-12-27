@@ -211,11 +211,17 @@
 					   self.roomVideos[ws.roomID] = {
 						  youtubeID : message.payload.youtubeID,
 						  status    : ws.playerStatus.status,
-						  seek      : avgSeekTime,
 						  sampledAt : new Date().getTime(),
 					   };
+
+					   if (!isNaN(avgSeekTime) && isFinite(avgSeekTime)) {
+						  self.roomVideos[ws.roomID].seek = avgSeekTime;
+					   }
 				    } else {
-					   self.roomVideos[ws.roomID].seek = avgSeekTime;
+					   if (!isNaN(avgSeekTime) && isFinite(avgSeekTime)) {
+						  self.roomVideos[ws.roomID].seek = avgSeekTime;
+					   }
+
 					   self.roomVideos[ws.roomID].sampledAt = new Date().getTime();
 				    }
 

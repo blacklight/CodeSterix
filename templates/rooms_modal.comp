@@ -8,7 +8,7 @@
 			 </div>
 			 <div class="modal-body">
 				<div class="rooms-list">
-				    <li class="room-row room-row-create">
+				    <li class="room-row-create">
 					   <span class="room-row-img glyphicon glyphicon-plus"></span>
 					   <div class="room-row-right">
 						  <span class="room-row-create-name">Create a room</span>

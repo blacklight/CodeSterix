@@ -247,14 +247,14 @@ span.search-track-field {
     padding: 0;
 }
 
-.room-row {
+.room-row, .room-row-create {
     list-style-type: none;
     padding: 10px 15px 10px 15px;
     cursor: pointer;
     font-size: 14px;
 }
 
-.room-row:hover {
+.room-row:hover, .room-row-create:hover {
     background-color: #444;
 }
 
