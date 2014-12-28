@@ -129,17 +129,20 @@ define([
 		  .success(function(rooms) {
 			 rooms.sort(function(a, b) { return a.online_users < b.online_users; });
 			 rooms.forEach(function(room) {
-				room.online_users = room.users.length + " online users";
+				room.online_users = room.users.length;
 				room.created_at = Utils.sqlDateToPrettyDate(room.created_at);
+				room.n_tracks = room.tracks.length;
 			 });
 
 			 $("#rooms-modal-container").html(roomsModalTemplate({ rooms : rooms }));
 
 			 if (!args["room_id"] || (opts && opts.forceShow)) {
-				$("#rooms-modal").modal({
-				    backdrop: "static",
-				    keyboard: false,
-				});
+				if (!args["room_id"]) {
+				    $("#rooms-modal").modal({
+					   backdrop: "static",
+					   keyboard: false,
+				    });
+				}
 
 				$("#rooms-modal").modal("show");
 			 }

@@ -28,7 +28,13 @@
 								{{name}}
 							 </span>
 							 <span class="room-row-online-users">
-								{{online_users}}
+								{{online_users}} online users, {{n_tracks}} video(s)
+							 </span>
+							 {{#if current_track}}
+								<span class="room-row-currently-playing">
+								    Currently playing: {{current_track/name}}
+								</span>
+							 {{/if}}
 							 </span>
 							 <span class="room-row-details">
 								Created

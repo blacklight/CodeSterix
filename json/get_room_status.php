@@ -33,6 +33,10 @@ while ($user = $stmt->fetchObject()) {
 $stmt = $_DB["room"]->get_room_tracks($_REQUEST["room_id"]);
 $room->tracks = array();
 while ($track = $stmt->fetchObject()) {
+    if (isset($track->playing) && intval($track->playing) == 1) {
+	   $room->playing = $track;
+    }
+
     array_push($room->tracks, $track);
 }
 

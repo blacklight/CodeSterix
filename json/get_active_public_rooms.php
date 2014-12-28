@@ -29,6 +29,15 @@ while ($room = $stmt->fetchObject()) {
 	   array_push($room->users, $user);
     }
 
+    $track_stmt = $_DB["room"]->get_room_tracks($room->id);
+    $room->tracks = array();
+    while ($track = $track_stmt->fetchObject()) {
+	   array_push($room->tracks, $track);
+	   if (isset($track->playing) && intval($track->playing) == 1) {
+		  $room->current_track = $track;
+	   }
+    }
+
     array_push($rooms, $room);
 }
 
