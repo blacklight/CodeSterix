@@ -96,6 +96,10 @@ define([
 				track.position = position++;
 				Playlist.append(track, { onlyAppend: (opts && opts.init ? true : false) });
 			 });
+
+			 if (window.config.room.tracks.length === 0) {
+				require("player").reset();
+			 }
 		  }
 
 		  if (!opts || (opts && !opts.onlyPlayList)) {

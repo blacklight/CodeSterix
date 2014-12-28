@@ -59,6 +59,10 @@ define("websocket_client", [
 			 break;
 
 		  case Protocol.MessageTypes.USER_LIST_CHANGED:
+			 if (message.payload && message.payload.roomID && message.payload.roomID != window.config.room.id) {
+				break;
+			 }
+
 			 if (window.config.room) {
 				require("room").updateRoom(window.config.room.id, { onlyUsersList: true });
 			 }

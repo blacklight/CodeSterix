@@ -132,6 +132,16 @@ define("player", [
 	   };
     };
 
+    var reset = function() {
+	   if ($("iframe#player").length > 0) {
+		  $("iframe#player").remove();
+		  $(".main-panel-left").append('<div id="player"></div>');
+		  $("#player-no-video").removeClass("hidden");
+	   }
+
+	   initialized = false;
+    };
+
     return {
 	   getCurrentStatus: getCurrentStatus,
 	   initialize: initialize,
@@ -139,6 +149,7 @@ define("player", [
 	   loadVideoById: loadVideoById,
 	   pauseVideo: pauseVideo,
 	   playVideo: playVideo,
+	   reset: reset,
 	   seekTo: seekTo,
     };
 });

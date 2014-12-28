@@ -265,6 +265,7 @@
 		  }));
 
 		  var roomID = ws.roomID;
+
 		  if (ws.socketID) {
 			 if (ws.roomID) {
 				delete self.rooms[ws.roomID][ws.socketID];
@@ -444,6 +445,16 @@
 			 return;
 		  }
 
+		  var oldRoomID = undefined;
+		  if (ws.roomID) {
+			 oldRoomID = ws.roomID;
+		  }
+
+		  if (ws.roomID && self.rooms[ws.roomID]
+				&& ws.socketID && self.rooms[ws.roomID][ws.socketID]) {
+			 delete self.rooms[ws.roomID][ws.socketID];
+		  }
+
 		  ws.roomID = message.payload.roomID;
 		  if (!self.rooms[ws.roomID]) {
 			 self.rooms[ws.roomID] = {};
@@ -471,6 +482,9 @@
 		  });
 
 		  notifyUserListChanged(ws.roomID);
+		  if (oldRoomID) {
+			 notifyUserListChanged(oldRoomID);
+		  }
 	   };
 
 	   var onPlaylistChanged = function(ws, message) {
@@ -682,7 +696,7 @@
 			 var sock = self.rooms[roomID][socketID];
 			 sendMessage(sock, {
 				msgType : Protocol.MessageTypes.USER_LIST_CHANGED,
-				payload : {},
+				payload : { roomID : roomID },
 			 });
 		  });
 	   };

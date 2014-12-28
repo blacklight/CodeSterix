@@ -40,7 +40,6 @@ require_once "auth.php";
 		  <div id="player-loading-video" class="hidden"></div>
 		  <div id="player"></div>
 		  <input type="hidden" id="player-tube">
-		  <input type="hidden" id="current-video-id">
 	   </div>
 	   <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 main-panel main-panel-center">
 		  <div id="playlist-container"></div>
