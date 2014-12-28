@@ -11,7 +11,7 @@ define("player", [
     var $video,
 	   initialized = false;
 
-    var initialize = function(videoID, args) {
+    var initialize = function(videoID, opts) {
 	   initialized = true;
 	   var self = this;
 
@@ -26,8 +26,8 @@ define("player", [
 				$video = $("#player-tube").data("player");
 				$("#player-loading-video").addClass("hidden");
 
-				if (!args || (args && !args.onlyAppend)) {
-				    self.loadVideoById(videoID, args && args.seek ? args.seek : 0);
+				if (!opts || (opts && !opts.onlyAppend)) {
+				    self.loadVideoById(videoID, opts);
 				}
 			 },
 
@@ -46,6 +46,16 @@ define("player", [
 					   youtubeID : videoData.video_id
 				    }
 				});
+
+				var seek = $video.p.getCurrentTime();
+				if (seek) {
+				    WebSocketClient.send({
+					   msgType : Protocol.MessageTypes.VIDEO_SEEK,
+					   payload : {
+						  seek: seek
+					   }
+				    });
+				}
 			 },
 
 			 unstarted: function(event) {
@@ -83,12 +93,16 @@ define("player", [
 	   $video.p.seekTo(seek);
     };
 
-    var loadVideoById = function(videoID, seek) {
+    var loadVideoById = function(videoID, opts) {
 	   $video.p.loadVideoById(videoID);
 	   Playlist.updateCurrentIndexByVideoId(videoID);
 
-	   if (seek) {
-		  seekTo(seek);
+	   if (opts && opts.seek) {
+		  seekTo(opts.seek);
+	   }
+
+	   if (opts && opts.paused) {
+		  pauseVideo();
 	   }
     };
 
@@ -129,6 +143,7 @@ define("player", [
 		  youtubeID : videoData.video_id,
 		  time      : currentTime,
 		  status    : playerState,
+		  sampledAt : new Date().getTime(),
 	   };
     };
 

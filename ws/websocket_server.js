@@ -162,10 +162,13 @@
 				// of heartbeat messages with their current playing time statistics
 				var allRoomHeartbeatsReceived = true;
 				var allWatchingSameItem = true;
+				var allPlayersActive = true;
 				var seekPreviouslyPerformed = false;
 				var avgSeekTime = 0;
 				var minSeekTime = 9999999;
 				var maxSeekTime = 0;
+				var minSeekTimeSampledAt = undefined;
+				var maxSeekTimeSampledAt = undefined;
 				var nRoomClients = 0;
 
 				Object.keys(self.rooms[ws.roomID]).forEach(function(socketID) {
@@ -185,6 +188,11 @@
 					   return;
 				    }
 
+				    if (sock.playerStatus.status !== Protocol.VideoStatus.PLAY) {
+					   allPlayersActive = false;
+					   return;
+				    }
+
 				    if (sock.seekPerformed) {
 					   seekPreviouslyPerformed = true;
 					   return;
@@ -192,17 +200,19 @@
 
 				    if (sock.playerStatus.time < minSeekTime) {
 					   minSeekTime = sock.playerStatus.time;
+					   minSeekTimeSampledAt = sock.playerStatus.sampledAt;
 				    }
 
 				    if (sock.playerStatus.time > maxSeekTime) {
 					   maxSeekTime = sock.playerStatus.time;
+					   maxSeekTimeSampledAt = sock.playerStatus.sampledAt;
 				    }
 
 				    avgSeekTime += sock.playerStatus.time;
 				    nRoomClients++;
 				});
 
-				if (allRoomHeartbeatsReceived && allWatchingSameItem) {
+				if (allRoomHeartbeatsReceived && allWatchingSameItem && allPlayersActive) {
 				    avgSeekTime /= nRoomClients;
 				    var seekCorrectionTolerance = 1;
 				    var smallCorrectionThreshold = 5;
@@ -232,12 +242,13 @@
 				    if (maxSeekTime - minSeekTime > seekCorrectionTolerance
 						  && maxSeekTime - minSeekTime <= smallCorrectionThreshold
 						  && !seekPreviouslyPerformed) {
+					   var seekTo = maxSeekTime + (new Date().getTime() - maxSeekTimeSampledAt);
 					   logger.info(JSON.stringify({
 						  messageType   : Protocol.MessageTypes.SEEK_CORRECTION,
 						  message       : JSON.stringify({
 							 roomID    : ws.roomID,
 							 youtubeID : newStatus.youtubeID,
-							 seekTo    : avgSeekTime,
+							 seekTo    : seekTo,
 						  }),
 					   }));
 
@@ -246,7 +257,7 @@
 						  sendMessage(sock, {
 							 msgType    : Protocol.MessageTypes.VIDEO_SEEK,
 							 payload    : {
-								seekTo : avgSeekTime,
+								seekTo : seekTo,
 							 },
 						  });
 					   });
@@ -636,6 +647,41 @@
 			 sendMessage(sock, {
 				msgType : Protocol.MessageTypes.VIDEO_PAUSE,
 				payload : { },
+			 });
+		  });
+	   };
+
+	   var onVideoSeek = function(ws, message) {
+		  if (!checkMessageIntegrity(ws, message)) {
+			 return;
+		  }
+
+		  if (!message.payload || !message.payload.seek) {
+			 return;
+		  }
+
+		  var roomID = self.clientsMap[message.socketID].roomID;
+		  var seek = message.payload.seek;
+
+		  logger.info(JSON.stringify({
+			 messageType : Protocol.MessageTypes.VIDEO_SEEK,
+			 socketID : ws.socketID,
+			 message : JSON.stringify({
+				seek : seek,
+			 }),
+		  }));
+
+		  Object.keys(self.rooms[roomID]).forEach(function(socketID) {
+			 var sock = self.rooms[roomID][socketID];
+			 if (sock.socketID === ws.socketID) {
+				return;
+			 }
+
+			 sendMessage(sock, {
+				msgType : Protocol.MessageTypes.VIDEO_PAUSE,
+				payload : {
+				    seekTo: seek
+				},
 			 });
 		  });
 	   };

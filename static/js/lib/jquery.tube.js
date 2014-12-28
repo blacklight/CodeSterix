@@ -95,11 +95,15 @@
     };
   
     this.notify = function () {
-      var self = this, args = Array.prototype.slice.apply(arguments), event = arguments[0];
+      var self = this, args = Array.prototype.slice.apply(arguments), event = arguments[0]; self.lastEvent = event;
   
       if (observers[event]) {
         $.each(observers[event], function () {
           if ($.isFunction(this)) {
+	       if (self.lastEvent === "ready" && args.length > 1 && args[1].target) {
+			 self.p = args[1].target;
+		  }
+
             this.apply(self, args);
           }
         });

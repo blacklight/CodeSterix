@@ -50,16 +50,18 @@ define("websocket_client", [
 				break;
 			 }
 
-			 if (message.payload.currentStatus.status === Protocol.VideoStatus.PLAY) {
-				require("player").initialize(message.payload.currentStatus.youtubeID, {
-				    seek: message.payload.currentStatus.seek
-				});
-			 }
+			 require("player").initialize(message.payload.currentStatus.youtubeID, {
+				seek   : message.payload.currentStatus.seek,
+				paused : message.payload.currentStatus.status !== Protocol.VideoStatus.PLAY,
+			 });
 
 			 break;
 
 		  case Protocol.MessageTypes.USER_LIST_CHANGED:
-			 if (message.payload && message.payload.roomID && message.payload.roomID != window.config.room.id) {
+			 if (message.payload
+				    && message.payload.roomID
+				    && window.config.room
+				    && message.payload.roomID != window.config.room.id) {
 				break;
 			 }
 
