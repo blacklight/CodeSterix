@@ -92,14 +92,14 @@ define([
 
 		  if (!opts || (opts && !opts.onlyUsersList)) {
 			 Playlist.clear();
+			 if (opts && opts.init) {
+				require("player").reset();
+			 }
+
 			 window.config.room.tracks.forEach(function(track) {
 				track.position = position++;
 				Playlist.append(track, { onlyAppend: (opts && opts.init ? true : false) });
 			 });
-
-			 if (window.config.room.tracks.length === 0) {
-				require("player").reset();
-			 }
 		  }
 
 		  if (!opts || (opts && !opts.onlyPlayList)) {
