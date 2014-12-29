@@ -97,11 +97,6 @@ body {
  * Player  *
  ***********/
 
-#player {
-    padding-left: 26px;
-    padding-right: 10px;
-}
-
 #player-no-video {
     background-image: url("../img/white_noise.gif");
     background-size: cover;
@@ -112,7 +107,9 @@ body {
 
 #player-loading-video {
     font-size: 18px;
-    text-align: center;
+    position: absolute;
+    left: 40%;
+    top: 180px;
 }
 
 /***********
@@ -226,6 +223,7 @@ span.search-track-field {
     position: absolute;
     font-size: 40px;
     text-align: center;
+    margin-left: 5px;
 }
 
 .playlist-play-hover-icon {
