@@ -38,6 +38,9 @@ define("websocket_client", [
 	   var message = JSON.parse(event.data);
 	   if (message.error && message.payload && message.payload.errorMessage) {
 		  $.toaster({ priority: 'warning', title: 'WebSocket error', message: message.payload.errorMessage, settings: { timeout: 5000 } });
+		  if (message.payload.reconnect) {
+			 onOpen();
+		  }
 	   }
 
 	   switch (message.msgType) {
@@ -50,10 +53,25 @@ define("websocket_client", [
 				break;
 			 }
 
-			 require("player").initialize(message.payload.currentStatus.youtubeID, {
-				seek   : message.payload.currentStatus.seek,
-				paused : message.payload.currentStatus.status !== Protocol.VideoStatus.PLAY,
-			 });
+			 var curStatus = message.payload.currentStatus;
+			 var Player = require("player");
+			 var isInitialized = Player.isInitialized();
+
+			 if (isInitialized) {
+				Player.loadVideoById(curStatus.youtubeID, {
+				    whenReady : true,
+				    seek      : curStatus.seek,
+				    paused    : curStatus.status !== Protocol.VideoStatus.PLAY,
+				    sampledAt : curStatus.sampledAt,
+				});
+			 } else {
+				require("room").initRoom(curStatus.roomID, { requireRoomRegistration: false });
+				Player.initialize(curStatus.youtubeID, {
+				    seek      : curStatus.seek,
+				    paused    : curStatus.status !== Protocol.VideoStatus.PLAY,
+				    sampledAt : curStatus.sampledAt,
+				});
+			 }
 
 			 break;
 

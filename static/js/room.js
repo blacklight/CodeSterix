@@ -51,7 +51,7 @@ define([
 	   });
     };
 
-    var initRoom = function(roomID) {
+    var initRoom = function(roomID, opts) {
 	   if (!roomID) {
 		  args = Utils.getUrlArguments();
 		  roomID = args["room_id"];
@@ -69,7 +69,12 @@ define([
 				}
 			 });
 
-			 updateRoom(roomID, { init: true });
+			 if (!opts) {
+				opts = {};
+			 }
+
+			 opts.init = true;
+			 updateRoom(roomID, opts);
 		  })
 		  .error(function() {
 			 $("#rooms-modal").modal("show");
@@ -93,7 +98,7 @@ define([
 		  if (!opts || (opts && !opts.onlyUsersList)) {
 			 Playlist.clear();
 			 if (opts && opts.init) {
-				require("player").reset();
+				// require("player").reset();
 			 }
 
 			 window.config.room.tracks.forEach(function(track) {

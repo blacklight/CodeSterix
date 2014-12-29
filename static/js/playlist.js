@@ -49,7 +49,7 @@ define("playlist", [
 	   videosMap[track.youtube_id] = track;
 
 	   var Player = require("player");
-	   if (!Player.isInitialized()) {
+	   if ((!args || (args && !args.onlyAppend)) && !Player.isInitialized()) {
 		  Player.initialize(track.youtube_id, args);
 	   }
 

@@ -9,6 +9,7 @@ define("player", [
     "use strict";
 
     var $video,
+	   pendingVideoAction,
 	   initialized = false;
 
     var initialize = function(videoID, opts) {
@@ -26,8 +27,26 @@ define("player", [
 				$video = $("#player-tube").data("player");
 				$("#player-loading-video").addClass("hidden");
 
-				if (!opts || (opts && !opts.onlyAppend)) {
-				    self.loadVideoById(videoID, opts);
+				if (!pendingVideoAction) {
+				    if (!opts || (opts && !opts.onlyAppend)) {
+					   if (opts && opts.seek && opts.sampledAt && !opts.paused) {
+						  opts.seek += (new Date().getTime() - opts.sampledAt)/1000;
+					   }
+
+					   self.loadVideoById(videoID, opts);
+				    }
+				} else {
+				    if (pendingVideoAction.seek) {
+					   var seek = pendingVideoAction.seek + (pendingVideoAction.sampledAt
+						  ? (new Date().getTime() - pendingVideoAction.sampledAt)/1000
+						  : 0);
+
+					   seekTo(seek);
+				    }
+
+				    if (pendingVideoAction.paused) {
+					   pauseVideo();
+				    }
 				}
 			 },
 
@@ -97,12 +116,28 @@ define("player", [
 	   $video.p.loadVideoById(videoID);
 	   Playlist.updateCurrentIndexByVideoId(videoID);
 
+	   if (opts.whenReady) {
+		  pendingVideoAction = {};
+	   }
+
 	   if (opts && opts.seek) {
-		  seekTo(opts.seek);
+		  if (opts.whenReady) {
+			 pendingVideoAction.seek = opts.seek;
+		  } else {
+			 seekTo(opts.seek);
+		  }
 	   }
 
 	   if (opts && opts.paused) {
-		  pauseVideo();
+		  if (opts.whenReady) {
+			 pendingVideoAction.paused = true;
+		  } else {
+			 pauseVideo();
+		  }
+	   }
+
+	   if (pendingVideoAction && opts && opts.sampledAt) {
+		  pendingVideoAction.sampledAt = opts.sampledAt;
 	   }
     };
 

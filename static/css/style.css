@@ -260,6 +260,7 @@ span.search-track-field {
 
 .room-row-right {
     display: inline-block;
+    width: 85%;
 }
 
 .room-row-img {

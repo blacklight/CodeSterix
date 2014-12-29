@@ -242,7 +242,7 @@
 				    if (maxSeekTime - minSeekTime > seekCorrectionTolerance
 						  && maxSeekTime - minSeekTime <= smallCorrectionThreshold
 						  && !seekPreviouslyPerformed) {
-					   var seekTo = maxSeekTime + (new Date().getTime() - maxSeekTimeSampledAt);
+					   var seekTo = maxSeekTime + (new Date().getTime() - maxSeekTimeSampledAt)/1000;
 					   logger.info(JSON.stringify({
 						  messageType   : Protocol.MessageTypes.SEEK_CORRECTION,
 						  message       : JSON.stringify({
@@ -395,8 +395,8 @@
 				    self.clientsMap[ws.socketID] = ws;
 
 				    logger.info(JSON.stringify({
-					   remoteAddress : ws._socket.remoteAddress,
-					   remotePort : ws._socket.remotePort,
+					   remoteAddress : ws._socket ? ws._socket.remoteAddress : undefined,
+					   remotePort : ws._socket ? ws._socket.remotePort : undefined,
 					   sessionID : message.payload.sessionID,
 					   messageType : "Client handshake succeeded",
 					   response : response,
@@ -420,8 +420,8 @@
 			 })
 			 .error(function(jqxhr, state, error) {
 				logger.error(JSON.stringify({
-				    remoteAddress : ws._socket.remoteAddress,
-				    remotePort : ws._socket.remotePort,
+				    remoteAddress : ws._socket ? ws._socket.remoteAddress : undefined,
+				    remotePort : ws._socket ? ws._socket.remotePort : undefined,
 				    sessionID : message.payload.sessionID,
 				    event : "AJAX get_session.php",
 				    ajax : jqxhr,
@@ -485,9 +485,10 @@
 				currentStatus : !self.roomVideos[ws.roomID] ? undefined : {
 				    youtubeID : self.roomVideos[ws.roomID].youtubeID,
 				    status    : self.roomVideos[ws.roomID].status,
-				    seek      : parseInt(self.roomVideos[ws.roomID].seek)
-					   + (new Date().getTime() - parseInt(self.roomVideos[ws.roomID].sampledAt))/1000,
+				    seek      : parseFloat(self.roomVideos[ws.roomID].seek)
+					   + parseFloat(new Date().getTime() - parseInt(self.roomVideos[ws.roomID].sampledAt))/1000,
 				    sampledAt : self.roomVideos[ws.roomID].sampledAt,
+				    roomID    : ws.roomID,
 				},
 			 },
 		  });
@@ -692,6 +693,7 @@
 				msgType : Protocol.MessageTypes.ERROR,
 				error   : true,
 				payload : {
+				    reconnect : true,
 				    errorMessage : "No socketID specified or socketID not registered",
 				},
 			 });
@@ -706,8 +708,8 @@
 		  try {
 			 if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_REQUEST) {
 				logger.debug(JSON.stringify({
-				    remoteAddress : ws._socket.remoteAddress,
-				    remotePort : ws._socket.remotePort,
+				    remoteAddress : ws._socket ? ws._socket.remoteAddress : undefined,
+				    remotePort : ws._socket ? ws._socket.remotePort : undefined,
 				    socketID : ws.socketID || undefined,
 				    action : "Message OUT",
 				    message : message,
