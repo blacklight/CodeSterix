@@ -48,11 +48,6 @@ define("playlist", [
 	   currentPlaylist.push(track);
 	   videosMap[track.youtube_id] = track;
 
-	   var Player = require("player");
-	   if ((!args || (args && !args.onlyAppend)) && !Player.isInitialized()) {
-		  Player.initialize(track.youtube_id, args);
-	   }
-
 	   if (!args || !args.appendToRoom) {
 		  $(".empty-playlist").remove();
 		  $("#playlist-container").append(playlistRowTemplate(track));

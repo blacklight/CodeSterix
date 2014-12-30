@@ -36,6 +36,8 @@ define("websocket_client", [
 
     var onMessage = function(event) {
 	   var message = JSON.parse(event.data);
+	   var Room, Player, Playlist;
+
 	   if (message.error && message.payload && message.payload.errorMessage) {
 		  $.toaster({ priority: 'warning', title: 'WebSocket error', message: message.payload.errorMessage, settings: { timeout: 5000 } });
 		  if (message.payload.reconnect) {
@@ -49,24 +51,19 @@ define("websocket_client", [
 			 break;
 
 		  case Protocol.MessageTypes.ROOM_SYNC:
-			 if (!message.payload.currentStatus) {
-				break;
+			 if (!Room) {
+				Room = require("room");
 			 }
 
 			 var curStatus = message.payload.currentStatus;
-			 var Player = require("player");
-			 var isInitialized = Player.isInitialized();
+			 Room.onRoomSync(curStatus.roomID);
 
-			 if (isInitialized) {
+			 if (curStatus.youtubeID) {
+				if (!Player) {
+				    Player = require("player");
+				}
+
 				Player.loadVideoById(curStatus.youtubeID, {
-				    whenReady : true,
-				    seek      : curStatus.seek,
-				    paused    : curStatus.status !== Protocol.VideoStatus.PLAY,
-				    sampledAt : curStatus.sampledAt,
-				});
-			 } else {
-				require("room").initRoom(curStatus.roomID, { requireRoomRegistration: false });
-				Player.initialize(curStatus.youtubeID, {
 				    seek      : curStatus.seek,
 				    paused    : curStatus.status !== Protocol.VideoStatus.PLAY,
 				    sampledAt : curStatus.sampledAt,
@@ -83,15 +80,11 @@ define("websocket_client", [
 				break;
 			 }
 
-			 if (window.config.room) {
-				require("room").updateRoom(window.config.room.id, { onlyUsersList: true });
-			 }
-			 break;
-
 		  case Protocol.MessageTypes.PLAYLIST_CHANGED:
 			 if (window.config.room) {
-				require("room").updateRoom(window.config.room.id, { onlyPlayList: true });
+				require("room").updateRoom(window.config.room.id);
 			 }
+
 			 break;
 
 		  case Protocol.MessageTypes.VIDEO_PLAY:
@@ -100,6 +93,7 @@ define("websocket_client", [
 			 } else {
 				require("player").playVideo();
 			 }
+
 			 break;
 
 		  case Protocol.MessageTypes.VIDEO_PAUSE:

@@ -132,11 +132,11 @@
 					   logger.info(JSON.stringify({
 						  socketID      : ws.socketID,
 						  messageType   : Protocol.MessageTypes.VIDEO_SEEK,
-						  message       : JSON.stringify({
+						  message       : {
 							 roomID    : ws.roomID,
 							 youtubeID : newStatus.youtubeID,
 							 seekTo    : newStatus.time,
-						  }),
+						  },
 					   }));
 
 					   Object.keys(self.rooms[ws.roomID]).forEach(function(socketID) {
@@ -164,12 +164,10 @@
 				var allWatchingSameItem = true;
 				var allPlayersActive = true;
 				var seekPreviouslyPerformed = false;
-				var avgSeekTime = 0;
 				var minSeekTime = 9999999;
 				var maxSeekTime = 0;
 				var minSeekTimeSampledAt = undefined;
 				var maxSeekTimeSampledAt = undefined;
-				var nRoomClients = 0;
 
 				Object.keys(self.rooms[ws.roomID]).forEach(function(socketID) {
 				    var sock = self.rooms[ws.roomID][socketID];
@@ -194,46 +192,40 @@
 				    }
 
 				    if (sock.seekPerformed) {
+					   sock.seekPerformed = false;
 					   seekPreviouslyPerformed = true;
 					   return;
 				    }
 
 				    if (sock.playerStatus.time < minSeekTime) {
-					   minSeekTime = sock.playerStatus.time;
+					   minSeekTime = parseFloat(sock.playerStatus.time);
 					   minSeekTimeSampledAt = sock.playerStatus.sampledAt;
 				    }
 
 				    if (sock.playerStatus.time > maxSeekTime) {
-					   maxSeekTime = sock.playerStatus.time;
+					   maxSeekTime = parseFloat(sock.playerStatus.time);
 					   maxSeekTimeSampledAt = sock.playerStatus.sampledAt;
 				    }
-
-				    avgSeekTime += sock.playerStatus.time;
-				    nRoomClients++;
 				});
 
 				if (allRoomHeartbeatsReceived && allWatchingSameItem && allPlayersActive) {
-				    avgSeekTime /= nRoomClients;
 				    var seekCorrectionTolerance = 1;
 				    var smallCorrectionThreshold = 5;
 
-				    if (!self.roomVideos[ws.roomID]) {
-					   self.roomVideos[ws.roomID] = {
-						  youtubeID : message.payload.youtubeID,
-						  status    : ws.playerStatus.status,
-						  sampledAt : new Date().getTime(),
-					   };
+				    self.roomVideos[ws.roomID] = {
+					   youtubeID : message.payload.playerStatus.youtubeID,
+					   status    : ws.playerStatus.status,
+					   sampledAt : new Date().getTime(),
+					   seek      : maxSeekTime,
+					   roomID    : ws.roomID,
+				    };
 
-					   if (!isNaN(avgSeekTime) && isFinite(avgSeekTime)) {
-						  self.roomVideos[ws.roomID].seek = avgSeekTime;
+				    logger.debug(JSON.stringify({
+					   messageType :  Protocol.MessageTypes.ROOM_INFO_UPDATE,
+					   message     :  {
+						  room    : self.roomVideos[ws.roomID]
 					   }
-				    } else {
-					   if (!isNaN(avgSeekTime) && isFinite(avgSeekTime)) {
-						  self.roomVideos[ws.roomID].seek = avgSeekTime;
-					   }
-
-					   self.roomVideos[ws.roomID].sampledAt = new Date().getTime();
-				    }
+				    }));
 
 				    // If the time offset among the players in the room
 				    // is above a certain tolerance, but not big enough
@@ -245,11 +237,11 @@
 					   var seekTo = maxSeekTime + (new Date().getTime() - maxSeekTimeSampledAt)/1000;
 					   logger.info(JSON.stringify({
 						  messageType   : Protocol.MessageTypes.SEEK_CORRECTION,
-						  message       : JSON.stringify({
+						  message       : {
 							 roomID    : ws.roomID,
 							 youtubeID : newStatus.youtubeID,
 							 seekTo    : seekTo,
-						  }),
+						  },
 					   }));
 
 					   Object.keys(self.rooms[ws.roomID]).forEach(function(socketID) {
@@ -346,7 +338,7 @@
 	   var onMessage = function(ws, message) {
 		  message = JSON.parse(message);
 
-		  if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_RESPONSE) {
+		  // if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_RESPONSE) {
 			 logger.debug(JSON.stringify({
 				remoteAddress : ws._socket ? ws._socket.remoteAddress : undefined,
 				remotePort : ws._socket ? ws._socket.remotePort : undefined,
@@ -354,7 +346,7 @@
 				action : "Message IN",
 				message : message,
 			 }));
-		  }
+		  // }
 
 		  if (ws.msgHandlers[message.msgType]) {
 			 ws.msgHandlers[message.msgType].forEach(function(msgHandler) {
@@ -476,20 +468,25 @@
 		  logger.info(JSON.stringify({
 			 socketID : message.socketID,
 			 messageType : Protocol.MessageTypes.ROOM_REGISTRATION,
-			 message : JSON.stringify({ roomID : ws.roomID }),
+			 message : { roomID : ws.roomID },
 		  }));
+
+		  var currentStatus = {
+			 roomID: ws.roomID
+		  };
+
+		  if (self.roomVideos[ws.roomID]) {
+			 currentStatus.youtubeID = self.roomVideos[ws.roomID].youtubeID;
+			 currentStatus.status = self.roomVideos[ws.roomID].status;
+			 currentStatus.sampledAt = self.roomVideos[ws.roomID].sampledAt;
+			 currentStatus.seek = parseFloat(self.roomVideos[ws.roomID].seek)
+				+ parseFloat(new Date().getTime() - parseInt(self.roomVideos[ws.roomID].sampledAt))/1000;
+		  }
 
 		  sendMessage(ws, {
 			 msgType : Protocol.MessageTypes.ROOM_SYNC,
 			 payload : {
-				currentStatus : !self.roomVideos[ws.roomID] ? undefined : {
-				    youtubeID : self.roomVideos[ws.roomID].youtubeID,
-				    status    : self.roomVideos[ws.roomID].status,
-				    seek      : parseFloat(self.roomVideos[ws.roomID].seek)
-					   + parseFloat(new Date().getTime() - parseInt(self.roomVideos[ws.roomID].sampledAt))/1000,
-				    sampledAt : self.roomVideos[ws.roomID].sampledAt,
-				    roomID    : ws.roomID,
-				},
+				currentStatus: currentStatus
 			 },
 		  });
 
@@ -508,7 +505,7 @@
 		  logger.info(JSON.stringify({
 			 socketID : message.socketID,
 			 messageType : Protocol.MessageTypes.PLAYLIST_CHANGED,
-			 message : JSON.stringify({ roomID : ws.roomID }),
+			 message : { roomID : ws.roomID },
 		  }));
 
 		  notifyPlayListChanged(roomID);
@@ -541,10 +538,10 @@
 			 logger.info(JSON.stringify({
 				messageType : Protocol.MessageTypes.VIDEO_RESUME,
 				socketID : ws.socketID,
-				message : JSON.stringify({
+				message : {
 				    roomID : roomID,
 				    youtubeID : message.payload.youtubeID,
-				}),
+				},
 			 }));
 
 
@@ -580,10 +577,10 @@
 			 logger.info(JSON.stringify({
 				messageType : Protocol.MessageTypes.VIDEO_PLAY,
 				socketID : ws.socketID,
-				message : JSON.stringify({
+				message : {
 				    roomID : roomID,
 				    youtubeID : message.payload.youtubeID,
-				}),
+				},
 			 }));
 
 			 var video = {
@@ -632,9 +629,9 @@
 		  logger.info(JSON.stringify({
 			 messageType : Protocol.MessageTypes.VIDEO_PAUSE,
 			 socketID : ws.socketID,
-			 message : JSON.stringify({
+			 message : {
 				roomID : roomID,
-			 }),
+			 },
 		  }));
 
 		  self.roomVideos[roomID].status = Protocol.VideoStatus.PAUSE;
@@ -667,9 +664,9 @@
 		  logger.info(JSON.stringify({
 			 messageType : Protocol.MessageTypes.VIDEO_SEEK,
 			 socketID : ws.socketID,
-			 message : JSON.stringify({
+			 message : {
 				seek : seek,
-			 }),
+			 },
 		  }));
 
 		  Object.keys(self.rooms[roomID]).forEach(function(socketID) {
@@ -706,7 +703,7 @@
 
 	   var sendMessage = function(ws, message) {
 		  try {
-			 if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_REQUEST) {
+			 // if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_REQUEST) {
 				logger.debug(JSON.stringify({
 				    remoteAddress : ws._socket ? ws._socket.remoteAddress : undefined,
 				    remotePort : ws._socket ? ws._socket.remotePort : undefined,
@@ -714,7 +711,7 @@
 				    action : "Message OUT",
 				    message : message,
 				}));
-			 }
+			 // }
 
 			 ws.send(JSON.stringify(message));
 		  } catch (e) {

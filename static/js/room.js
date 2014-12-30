@@ -41,6 +41,7 @@ define([
 				return;
 			 }
 
+			 require("player").reset();
 			 $.getJSON("json/create_room.php", {
 				name       : name,
 			 })
@@ -68,19 +69,21 @@ define([
 				    roomID : roomID,
 				}
 			 });
-
-			 if (!opts) {
-				opts = {};
-			 }
-
-			 opts.init = true;
-			 updateRoom(roomID, opts);
 		  })
 		  .error(function() {
 			 $("#rooms-modal").modal("show");
 			 window.location.href = Utils.createUrlFromArguments();
 		  });
 	   }
+    };
+
+    var onRoomSync = function(roomID, opts) {
+	   if (!opts) {
+		  opts = {};
+	   }
+
+	   opts.init = true;
+	   updateRoom(roomID, opts);
     };
 
     var updateRoom = function(roomID, opts) {
@@ -90,33 +93,24 @@ define([
 	   .success(function(response) {
 		  window.config.room = response.room;
 		  window.location.href = Utils.createUrlFromArguments({
-			 room_id : roomID
+			 room_id: roomID
 		  });
 
 		  var position = 0;
+		  Playlist.clear();
+		  window.config.room.tracks.forEach(function(track) {
+			 track.position = position++;
+			 Playlist.append(track);
+		  });
 
-		  if (!opts || (opts && !opts.onlyUsersList)) {
-			 Playlist.clear();
-			 if (opts && opts.init) {
-				// require("player").reset();
-			 }
+		  window.config.room.created_at = Utils.sqlDateToPrettyDate(window.config.room.created_at);
+		  window.config.room.users_count = window.config.room.users.length;
+		  window.config.room.users.forEach(function(user) {
+			 user.connected_since = Utils.sqlDateToPrettyDate(user.connected_since);
+		  });
 
-			 window.config.room.tracks.forEach(function(track) {
-				track.position = position++;
-				Playlist.append(track, { onlyAppend: (opts && opts.init ? true : false) });
-			 });
-		  }
-
-		  if (!opts || (opts && !opts.onlyPlayList)) {
-			 window.config.room.created_at = Utils.sqlDateToPrettyDate(window.config.room.created_at);
-			 window.config.room.users_count = window.config.room.users.length;
-			 window.config.room.users.forEach(function(user) {
-				user.connected_since = Utils.sqlDateToPrettyDate(user.connected_since);
-			 });
-
-			 $("#users-container").html(usersListTemplate(window.config.room));
-			 $("[rel='tooltip']").tooltip();
-		  }
+		  $("#users-container").html(usersListTemplate(window.config.room));
+		  $("[rel='tooltip']").tooltip();
 
 		  $("#rooms-modal").modal("hide");
 		  $("#panel-container").removeClass("hidden");
@@ -155,9 +149,10 @@ define([
     };
 
     return {
-	   initRoom : initRoom,
-	   updateRoom : updateRoom,
-	   initRoomsModal : initRoomsModal,
+	   initRoom: initRoom,
+	   initRoomsModal: initRoomsModal,
+	   onRoomSync: onRoomSync,
+	   updateRoom: updateRoom,
     };
 });
 

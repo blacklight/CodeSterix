@@ -13,6 +13,7 @@ exports.MessageTypes = {
     HEARTBEAT_RESPONSE : "Heartbeat response",
     ROOM_REGISTRATION  : "Room registration",
     ROOM_SYNC          : "Room sync",
+    ROOM_INFO_UPDATE   : "Room info update",
     CONNECTION_CLOSE   : "Connection close",
     USER_LIST_CHANGED  : "User list changed",
     PLAYLIST_CHANGED   : "Playlist changed",

@@ -113,10 +113,15 @@ define("player", [
     };
 
     var loadVideoById = function(videoID, opts) {
+	   if (!$video || !$video.p || !$video.p.loadVideoById) {
+		  this.initialize(videoID, opts);
+		  return;
+	   }
+
 	   $video.p.loadVideoById(videoID);
 	   Playlist.updateCurrentIndexByVideoId(videoID);
 
-	   if (opts.whenReady) {
+	   if (opts && opts.whenReady) {
 		  pendingVideoAction = {};
 	   }
 
@@ -189,6 +194,7 @@ define("player", [
 		  $("#player-no-video").removeClass("hidden");
 	   }
 
+	   $video = undefined;
 	   initialized = false;
     };
 
