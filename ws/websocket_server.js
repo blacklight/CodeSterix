@@ -304,7 +304,7 @@
 				})
 				.error(function(jqxhr, state, error) {
 				    logger.error(JSON.stringify({
-					   sessionID : message.payload.sessionID,
+					   sessionID : message && message.payload ? message.payload.sessionID : undefined,
 					   event : "AJAX user_disconnect.php",
 					   ajax : jqxhr,
 					   state : state,
