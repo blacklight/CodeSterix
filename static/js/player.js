@@ -52,6 +52,13 @@ define("player", [
 			 },
 
 			 end: function(event) {
+				var currentVideo = Playlist.getCurrentVideo();
+				if (currentVideo && currentVideo.id) {
+				    $.getJSON("json/mark_as_played.php", {
+					   room_track_id: currentVideo.id,
+				    });
+				}
+
 				var nextVideo = Playlist.getNextVideo();
 				if (nextVideo) {
 				    self.loadVideoById(nextVideo.youtube_id);
