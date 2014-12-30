@@ -83,6 +83,10 @@ define("playlist", [
 	   }
     };
 
+    var getCurrentVideo = function() {
+	   return currentPlaylist[currentPlaylistIndex];
+    };
+
     var getNextVideo = function() {
 	   return currentPlaylist[++currentPlaylistIndex];
     };
@@ -90,8 +94,9 @@ define("playlist", [
     return {
 	   append: append,
 	   clear:  clear,
-	   updateCurrentIndexByVideoId: updateCurrentIndexByVideoId,
+	   getCurrentVideo: getCurrentVideo,
 	   getNextVideo: getNextVideo,
+	   updateCurrentIndexByVideoId: updateCurrentIndexByVideoId,
     };
 });
 
