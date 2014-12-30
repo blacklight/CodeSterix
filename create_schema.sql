@@ -85,23 +85,23 @@ CREATE TABLE tonlist_room_track_history(
 
 DROP TABLE IF EXISTS tonlist_user_room;
 CREATE TABLE tonlist_user_room(
-    user_id int(10) unsigned,
+    session_id varchar(32),
     room_id mediumint(8) unsigned,
     last_updated_at timestamp default current_timestamp,
 
-    PRIMARY KEY(user_id, room_id),
-    FOREIGN KEY(user_id) REFERENCES tonlist_user(id),
+    PRIMARY KEY(session_id, room_id),
+    FOREIGN KEY(session_id) REFERENCES tonlist_user_session(session_id) ON DELETE CASCADE,
     FOREIGN KEY(room_id) REFERENCES tonlist_room(id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS tonlist_user_room_history;
 CREATE TABLE tonlist_user_room_history(
     id int(11) unsigned PRIMARY KEY auto_increment,
-    user_id int(10) unsigned,
+    session_id varchar(32),
     room_id mediumint(8) unsigned,
     created_at timestamp default current_timestamp,
 
-    KEY(user_id),
+    KEY(session_id),
     KEY(room_id)
 );
 

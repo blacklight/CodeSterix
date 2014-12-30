@@ -4,6 +4,7 @@ require_once "db_user.php";
 require_once "db_track.php";
 require_once "db_user_room.php";
 require_once "db_room_track.php";
+require_once "db_session.php";
 
 global $_DB;
 
@@ -29,11 +30,14 @@ class DbRoom extends Db {
 			  , u.picture
 			  , ur.last_updated_at AS connected_since
 		    FROM " . $_DB["user"]->get_table_name() . " u
+		    JOIN " . $_DB["user_session"]->get_table_name() . " us
+		      ON us.user_id = u.id
 		    JOIN " . $_DB["user_room"]->get_table_name() . " ur
-		      ON ur.user_id = u.id
+		      ON ur.session_id = us.session_id
 		    JOIN " . $this->table_name . " r
 			 ON ur.room_id = r.id
-		   WHERE r.id = ?",
+		   WHERE r.id = ?
+		   ORDER BY connected_since",
 		  $room_id);
     }
 

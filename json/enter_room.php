@@ -16,8 +16,8 @@ if (!$room) {
 }
 
 $_DB["user"]->enter_room(array(
-    "user_id" => $u->id,
-    "room_id" => $_REQUEST["room_id"],
+    "session_id" => $_COOKIE["PHPSESSID"],
+    "room_id"    => $_REQUEST["room_id"],
 ));
 
 print json_encode(array(
