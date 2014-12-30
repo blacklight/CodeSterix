@@ -104,7 +104,11 @@ define("player", [
 	   $video.p.pauseVideo();
     };
 
-    var playVideo = function() {
+    var playVideo = function(opts) {
+	   if (opts && opts.seek) {
+		  seekTo(opts.seek);
+	   }
+
 	   $video.p.playVideo();
     };
 

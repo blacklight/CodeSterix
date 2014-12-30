@@ -338,7 +338,7 @@
 	   var onMessage = function(ws, message) {
 		  message = JSON.parse(message);
 
-		  // if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_RESPONSE) {
+		  if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_RESPONSE) {
 			 logger.debug(JSON.stringify({
 				remoteAddress : ws._socket ? ws._socket.remoteAddress : undefined,
 				remotePort : ws._socket ? ws._socket.remotePort : undefined,
@@ -346,7 +346,7 @@
 				action : "Message IN",
 				message : message,
 			 }));
-		  // }
+		  }
 
 		  if (ws.msgHandlers[message.msgType]) {
 			 ws.msgHandlers[message.msgType].forEach(function(msgHandler) {
@@ -537,10 +537,11 @@
 
 			 logger.info(JSON.stringify({
 				messageType : Protocol.MessageTypes.VIDEO_RESUME,
-				socketID : ws.socketID,
-				message : {
-				    roomID : roomID,
+				socketID    : ws.socketID,
+				message     : {
+				    roomID    : roomID,
 				    youtubeID : message.payload.youtubeID,
+				    seek      : ws.playerStatus ? ws.playerStatus.time : undefined,
 				},
 			 }));
 
@@ -555,8 +556,10 @@
 				}
 
 				sendMessage(sock, {
-				    msgType : Protocol.MessageTypes.VIDEO_PLAY,
-				    payload : { },
+				    msgType  : Protocol.MessageTypes.VIDEO_PLAY,
+				    payload  : {
+					   seek : ws.playerStatus ? ws.playerStatus.time : undefined,
+				    },
 				});
 			 });
 
@@ -703,7 +706,7 @@
 
 	   var sendMessage = function(ws, message) {
 		  try {
-			 // if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_REQUEST) {
+			 if (message.msgType !== Protocol.MessageTypes.HEARTBEAT_REQUEST) {
 				logger.debug(JSON.stringify({
 				    remoteAddress : ws._socket ? ws._socket.remoteAddress : undefined,
 				    remotePort : ws._socket ? ws._socket.remotePort : undefined,
@@ -711,7 +714,7 @@
 				    action : "Message OUT",
 				    message : message,
 				}));
-			 // }
+			 }
 
 			 ws.send(JSON.stringify(message));
 		  } catch (e) {

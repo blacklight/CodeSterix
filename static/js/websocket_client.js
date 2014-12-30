@@ -91,7 +91,8 @@ define("websocket_client", [
 			 if (message.payload && message.payload.youtubeID) {
 				require("player").loadVideoById(message.payload.youtubeID);
 			 } else {
-				require("player").playVideo();
+				require("player").playVideo({ seek: message.payload && message.payload.seek
+				    ? message.payload.seek : undefined });
 			 }
 
 			 break;
