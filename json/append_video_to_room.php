@@ -48,6 +48,7 @@ $creator = $_DB["user"]->retrieve($room_track->creator_user_id);
 
 print json_encode(array(
     "track" => array(
+	   "id"                 => $room_track->id,
 	   "youtube_id"         => $track->youtube_id,
 	   "name"               => $track->name,
 	   "description"        => $track->description,

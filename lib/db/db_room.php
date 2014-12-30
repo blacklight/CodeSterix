@@ -49,6 +49,7 @@ class DbRoom extends Db {
 			  , t.name
 			  , t.description AS description
 			  , t.image AS image
+			  , rt.id AS id
 			  , rt.room_id
 			  , rt.playing
 			  , rt.playing_done
