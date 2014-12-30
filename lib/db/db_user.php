@@ -24,7 +24,7 @@ class DbUser extends Db {
 	   global $_DB;
 
 	   if (!$new_room_id) {
-		  $session = $_DB["user_session"]->retrieve($args["session_id"]);
+		  $session = $_DB["user_session"]->retrieve($session_id);
 		  $this->query("UPDATE " . $this->table_name
 			 . " SET logged_in = 0 WHERE id = ?",
 			 $session->user_id);
