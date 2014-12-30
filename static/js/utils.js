@@ -65,8 +65,14 @@ define("utils", [
 	   return date.toDateString() + ", " + date.toLocaleTimeString();
     };
 
+    var getGmtTime = function() {
+	   return new Date(new Date().valueOf()
+		  + new Date().getTimezoneOffset() * 60 * 1000).getTime();
+    };
+
     return {
 	   getCookie : getCookie,
+	   getGmtTime : getGmtTime,
 	   getUrlArguments : getUrlArguments,
 	   createUrlFromArguments : createUrlFromArguments,
 	   jsDateToSqlDate : jsDateToSqlDate,

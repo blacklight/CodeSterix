@@ -79,6 +79,11 @@
 		  logger.info("WebSocket server initialized");
 	   };
 
+	   var getGmtTime = function() {
+		  return new Date(new Date().valueOf()
+			 + new Date().getTimezoneOffset() * 60 * 1000).getTime();
+	   };
+
 	   var heartBeatLoop = function() {
 		  for (var i=0; i < self.clients.length; ++i) {
 			 if (self.clients[i].socketID) {
@@ -215,9 +220,9 @@
 				    self.roomVideos[ws.roomID] = {
 					   youtubeID : message.payload.playerStatus.youtubeID,
 					   status    : ws.playerStatus.status,
-					   sampledAt : new Date().getTime(),
 					   seek      : maxSeekTime,
 					   roomID    : ws.roomID,
+					   sampledAt : getGmtTime(),
 				    };
 
 				    logger.debug(JSON.stringify({
@@ -234,7 +239,7 @@
 				    if (maxSeekTime - minSeekTime > seekCorrectionTolerance
 						  && maxSeekTime - minSeekTime <= smallCorrectionThreshold
 						  && !seekPreviouslyPerformed) {
-					   var seekTo = maxSeekTime + (new Date().getTime() - maxSeekTimeSampledAt)/1000;
+					   var seekTo = maxSeekTime + (getGmtTime() - maxSeekTimeSampledAt)/1000;
 					   logger.info(JSON.stringify({
 						  messageType   : Protocol.MessageTypes.SEEK_CORRECTION,
 						  message       : {
@@ -480,7 +485,7 @@
 			 currentStatus.status = self.roomVideos[ws.roomID].status;
 			 currentStatus.sampledAt = self.roomVideos[ws.roomID].sampledAt;
 			 currentStatus.seek = parseFloat(self.roomVideos[ws.roomID].seek)
-				+ parseFloat(new Date().getTime() - parseInt(self.roomVideos[ws.roomID].sampledAt))/1000;
+				+ parseFloat(getGmtTime() - parseInt(self.roomVideos[ws.roomID].sampledAt))/1000;
 		  }
 
 		  sendMessage(ws, {
@@ -547,7 +552,7 @@
 
 
 			 self.roomVideos[roomID].status = Protocol.VideoStatus.PLAY;
-			 self.roomVideos[roomID].sampledAt = new Date().getTime();
+			 self.roomVideos[roomID].sampledAt = getGmtTime();
 
 			 Object.keys(self.rooms[roomID]).forEach(function(socketID) {
 				var sock = self.rooms[roomID][socketID];
@@ -590,7 +595,7 @@
 				youtubeID : message.payload.youtubeID,
 				status    : Protocol.VideoStatus.PLAY,
 				seek      : 0,
-				sampledAt : new Date().getTime(),
+				sampledAt : getGmtTime(),
 			 };
 
 			 self.roomVideos[roomID] = video;

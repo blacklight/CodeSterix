@@ -3,9 +3,10 @@ define("player", [
     "playlist",
     "websocket_client",
     "protocol",
+    "utils",
     "lib/jquery.tube",
     "lib/bootstrap",
-], function($, Playlist, WebSocketClient, Protocol) {
+], function($, Playlist, WebSocketClient, Protocol, Utils) {
     "use strict";
 
     var $video,
@@ -30,7 +31,7 @@ define("player", [
 				if (!pendingVideoAction) {
 				    if (!opts || (opts && !opts.onlyAppend)) {
 					   if (opts && opts.seek && opts.sampledAt && !opts.paused) {
-						  opts.seek += (new Date().getTime() - opts.sampledAt)/1000;
+						  opts.seek += (Utils.getGmtTime() - opts.sampledAt)/1000;
 					   }
 
 					   self.loadVideoById(videoID, opts);
@@ -38,7 +39,7 @@ define("player", [
 				} else {
 				    if (pendingVideoAction.seek) {
 					   var seek = pendingVideoAction.seek + (pendingVideoAction.sampledAt
-						  ? (new Date().getTime() - pendingVideoAction.sampledAt)/1000
+						  ? (Utils.getGmtTime() - pendingVideoAction.sampledAt)/1000
 						  : 0);
 
 					   seekTo(seek);
@@ -187,7 +188,7 @@ define("player", [
 		  youtubeID : videoData.video_id,
 		  time      : currentTime,
 		  status    : playerState,
-		  sampledAt : new Date().getTime(),
+		  sampledAt : Utils.getGmtTime(),
 	   };
     };
 
