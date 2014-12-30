@@ -13,7 +13,9 @@ if (isset($_COOKIE["access_token"])) {
 }
 
 if (isset($token)) {
-    file_get_contents("https://accounts.google.com/o/oauth2/revoke?token=" . $token);
+    file_get_contents("https://accounts.google.com/o/oauth2/revoke?" .
+	   http_build_query(array("token" => $token))
+    );
 }
 
 session_unset();
