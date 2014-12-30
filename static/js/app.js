@@ -32,7 +32,6 @@ define([
 	   initElements();
 	   initBindings();
 	   initWebSocketClient();
-	   Room.initRoom();
     };
 
     var initTemplates = function() {

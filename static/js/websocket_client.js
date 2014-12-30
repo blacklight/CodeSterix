@@ -40,14 +40,16 @@ define("websocket_client", [
 
 	   if (message.error && message.payload && message.payload.errorMessage) {
 		  $.toaster({ priority: 'warning', title: 'WebSocket error', message: message.payload.errorMessage, settings: { timeout: 5000 } });
-		  if (message.payload.reconnect) {
-			 onOpen();
-		  }
 	   }
 
 	   switch (message.msgType) {
 		  case Protocol.MessageTypes.HANDSHAKE_RESPONSE:
 			 socketID = message.payload.socketID;
+			 if (!Room) {
+				Room = require("room");
+			 }
+
+			 Room.initRoom();
 			 break;
 
 		  case Protocol.MessageTypes.ROOM_SYNC:
