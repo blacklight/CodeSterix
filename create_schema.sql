@@ -105,3 +105,11 @@ CREATE TABLE tonlist_user_room_history(
     KEY(room_id)
 );
 
+CREATE VIEW tonlist_user_room_view
+    AS
+SELECT u.id AS user_id, ur.room_id, ur.last_updated_at
+  FROM tonlist_user u
+  JOIN tonlist_user_session s
+    ON s.user_id = u.id
+  JOIN tonlist_user_room ur
+    ON ur.session_id = s.session_id;
