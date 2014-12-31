@@ -43,6 +43,13 @@ Then change the configuration in ws/config.js, and start the websocket server:
 
 ```
 $ cd ws/
-$ node server.js
+$ ./start_ws.sh
+```
+
+You can also stop it anytime with:
+
+```
+$ cd ws/
+$ ./stop.sh
 ```
 
