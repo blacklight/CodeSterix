@@ -30,9 +30,6 @@
 					   <span class="caret"></span>
 				    </a>
 				    <ul class="dropdown-menu" role="menu">
-					   <li><a href="#">Your account</a></li>
-					   <li><a href="#">Options</a></li>
-					   <li class="divider"></li>
 					   <li class="logout"><a href="#">Logout</a></li>
 				    </ul>
 				</li>
