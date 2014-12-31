@@ -12,10 +12,12 @@ class DbUser extends Db {
     protected $columns = array(
 	   "id",
 	   "google_id",
+	   "facebook_id",
 	   "name",
 	   "given_name",
 	   "email",
 	   "picture",
+	   "auth_type_id",
     );
 
     protected $primary_key = "id";

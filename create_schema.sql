@@ -1,12 +1,25 @@
+DROP TABLE IF EXISTS tonlist_auth_type;
+CREATE TABLE tonlist_auth_type(
+    id tinyint(3) unsigned PRIMARY KEY,
+    name varchar(32)
+);
+
+INSERT INTO tonlist_auth_type(id, name) VALUES(1, 'Google');
+INSERT INTO tonlist_auth_type(id, name) VALUES(2, 'Facebook');
+
 DROP TABLE IF EXISTS tonlist_user;
 CREATE TABLE tonlist_user(
     id int(10) unsigned PRIMARY KEY auto_increment,
     google_id varchar(32) UNIQUE,
+    facebook_id varchar(32) UNIQUE,
     email varchar(255) NOT NULL,
     name varchar(255) NOT NULL,
     given_name varchar(255) NOT NULL,
     picture varchar(255),
-    logged_in tinyint(1) unsigned NOT NULL
+    auth_type_id tinyint(3) unsigned NOT NULL,
+    logged_in tinyint(1) unsigned NOT NULL,
+
+    FOREIGN KEY(auth_type_id) REFERENCES tonlist_auth_type(id)
 );
 
 DROP TABLE IF EXISTS tonlist_user_session;

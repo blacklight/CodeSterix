@@ -45,7 +45,10 @@ if (isset($user) && $user) {
 				data-requestvisibleactions="http://schema.org/AddAction"
 				data-scope="https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile email"
 			 >
-			 </span>
+			 </span><br/>
+
+			 <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+			 </fb:login-button>
 		  </span>
 	   </div>
     </body>
