@@ -50,6 +50,6 @@ You can also stop it anytime with:
 
 ```
 $ cd ws/
-$ ./stop.sh
+$ ./stop_ws.sh
 ```
 
