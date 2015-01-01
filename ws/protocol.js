@@ -27,6 +27,8 @@ exports.MessageTypes = {
     HANDSHAKE_ERROR    : "Error",
     SESSION_ERROR      : "Session error",
     HTTP_ERROR         : "HTTP error",
+    ROOM_TYPING_START  : "Room typing start",
+    ROOM_TYPING_END    : "Room typing end",
 };
 
 exports.VideoStatus = {
@@ -39,10 +41,12 @@ exports.VideoStatus = {
 };
 
 exports.Events = {
-    USER_CONNECT    : "User connection",
-    USER_DISCONNECT : "User disconnection",
-    VIDEO_ADD       : "Video added",
-    ROOM_MSG        : "Room message",
+    USER_CONNECT      : "User connection",
+    USER_DISCONNECT   : "User disconnection",
+    VIDEO_ADD         : "Video added",
+    ROOM_MSG          : "Room message",
+    ROOM_TYPING_START : "Room typing start",
+    ROOM_TYPING_END   : "Room typing end",
 };
 
 exports.HeartBeatTimeout = 2000;

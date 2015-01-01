@@ -60,6 +60,12 @@
 				case "ROOM_REGISTRATION":
 				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onRoomRegistration);
 				    break;
+				case "ROOM_TYPING_START":
+				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onRoomTypingStart);
+				    break;
+				case "ROOM_TYPING_END":
+				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onRoomTypingEnd);
+				    break;
 				case "PLAYLIST_CHANGED":
 				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onPlaylistChanged);
 				    break;
@@ -418,6 +424,60 @@
 		  } else if (message.payload.userID) {
 			 // TODO
 		  }
+	   };
+
+	   var onRoomTypingStart = function(ws, message) {
+		  if (!checkMessageIntegrity(ws, message)) {
+			 return;
+		  }
+
+		  logger.info(JSON.stringify({
+			 socketID    : ws.socketID,
+			 roomID      : ws.roomID,
+			 messageType : Protocol.MessageTypes.ROOM_TYPING_START,
+		  }));
+
+		  Object.keys(self.rooms[ws.roomID]).forEach(function(socketID) {
+			 var sock = self.rooms[ws.roomID][socketID];
+			 if (sock.socketID === ws.socketID) {
+				return;
+			 }
+
+			 sendMessage(sock, {
+				msgType     : Protocol.MessageTypes.ROOM_TYPING_START,
+				payload     : {
+				    user    : ws.user,
+				    roomID  : ws.roomID,
+				},
+			 });
+		  });
+	   };
+
+	   var onRoomTypingEnd = function(ws, message) {
+		  if (!checkMessageIntegrity(ws, message)) {
+			 return;
+		  }
+
+		  logger.info(JSON.stringify({
+			 socketID    : ws.socketID,
+			 roomID      : ws.roomID,
+			 messageType : Protocol.MessageTypes.ROOM_TYPING_END,
+		  }));
+
+		  Object.keys(self.rooms[ws.roomID]).forEach(function(socketID) {
+			 var sock = self.rooms[ws.roomID][socketID];
+			 if (sock.socketID === ws.socketID) {
+				return;
+			 }
+
+			 sendMessage(sock, {
+				msgType     : Protocol.MessageTypes.ROOM_TYPING_END,
+				payload     : {
+				    user    : ws.user,
+				    roomID  : ws.roomID,
+				},
+			 });
+		  });
 	   };
 
 	   var onHandshakeRequest = function(ws, message) {

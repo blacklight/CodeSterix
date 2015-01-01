@@ -35,3 +35,7 @@
     </div>
 </script>
 
+<script id="typing-notice-template" type="text/x-handlebars-template">
+    <div class="typing-notice event-window-typing-notice" data-user-id="{{user.id}}">{{user.name}} is typing</div>
+</script>
+

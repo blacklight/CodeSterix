@@ -11,13 +11,17 @@ define([
     var eventWindowTemplate,
 	   eventWindowEmptyTemplate,
 	   msgEventTemplate,
+	   typingNoticeTemplate,
 	   genericEventTemplate;
+
+    var typingNoticeTimeout = undefined;
 
     var initTemplates = function() {
 	   eventWindowTemplate = Handlebars.compile($("#event-window-template").html());
 	   eventWindowEmptyTemplate = Handlebars.compile($("#event-window-empty-template").html());
 	   genericEventTemplate = Handlebars.compile($("#generic-event-template").html());
 	   msgEventTemplate = Handlebars.compile($("#msg-event-template").html());
+	   typingNoticeTemplate = Handlebars.compile($("#typing-notice-template").html());
     };
 
     var initElements = function() {
@@ -27,8 +31,14 @@ define([
     };
 
     var initBindings = function() {
+
 	   $(".chat-line").on("keyup", function(event) {
 		  if (event.keyCode === 13) {
+			 if (typingNoticeTimeout) {
+				clearTimeout(typingNoticeTimeout);
+				notifyTypingEnd();
+			 }
+
 			 var msg = $(this).val().trim();
 			 $(this).val("");
 			 if (msg === "") {
@@ -42,8 +52,33 @@ define([
 				    message : msg,
 				}
 			 });
+		  } else {
+			 if ($(this).val().trim() === "") {
+				if (typingNoticeTimeout) {
+				    clearTimeout(typingNoticeTimeout);
+				    notifyTypingEnd();
+				}
+
+				return;
+			 }
+
+			 if (!typingNoticeTimeout) {
+				WebSocketClient.send({
+				    msgType: Protocol.MessageTypes.ROOM_TYPING_START
+				});
+
+				typingNoticeTimeout = setTimeout(notifyTypingEnd, 3000);
+			 }
 		  }
 	   });
+    };
+
+    var notifyTypingEnd = function() {
+	   WebSocketClient.send({
+		  msgType: Protocol.MessageTypes.ROOM_TYPING_END
+	   });
+
+	   typingNoticeTimeout = undefined;
     };
 
     var initEventWindow = function() {
@@ -73,6 +108,14 @@ define([
 			 }
 
 			 $("#event-window-content").append(msgEventTemplate(event));
+			 break;
+
+		  case Protocol.MessageTypes.ROOM_TYPING_START:
+			 $("#event-window-content").append(typingNoticeTemplate(event));
+			 break;
+
+		  case Protocol.MessageTypes.ROOM_TYPING_END:
+			 $(".event-window-typing-notice[data-user-id=" + event.user.id + "]").remove();
 			 break;
 	   }
 

@@ -196,6 +196,10 @@ body {
     color: #c8c8c8;
 }
 
+.typing-notice {
+    font-size: 11px;
+}
+
 /***********
  * Search  *
  ***********/

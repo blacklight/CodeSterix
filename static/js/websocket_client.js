@@ -36,7 +36,11 @@ define("websocket_client", [
 
     var onMessage = function(event) {
 	   var message = JSON.parse(event.data);
-	   var Room, Player, Playlist, EventWindow;
+	   var Room, Player, EventWindow;
+
+	   EventWindow = require("event_window");
+	   Room = require("room");
+	   Player = require("player");
 
 	   if (message.error && message.payload && message.payload.errorMessage) {
 		  $.toaster({ priority: 'warning', title: 'WebSocket error', message: message.payload.errorMessage, settings: { timeout: 5000 } });
@@ -45,26 +49,14 @@ define("websocket_client", [
 	   switch (message.msgType) {
 		  case Protocol.MessageTypes.HANDSHAKE_RESPONSE:
 			 socketID = message.payload.socketID;
-			 if (!Room) {
-				Room = require("room");
-			 }
-
 			 Room.initRoom();
 			 break;
 
 		  case Protocol.MessageTypes.ROOM_SYNC:
-			 if (!Room) {
-				Room = require("room");
-			 }
-
 			 var curStatus = message.payload.currentStatus;
 			 Room.onRoomSync(curStatus.roomID);
 
 			 if (curStatus.youtubeID) {
-				if (!Player) {
-				    Player = require("player");
-				}
-
 				Player.loadVideoById(curStatus.youtubeID, {
 				    seek      : curStatus.seek,
 				    paused    : curStatus.status !== Protocol.VideoStatus.PLAY,
@@ -83,10 +75,6 @@ define("websocket_client", [
 			 }
 
 			 if (message.payload.user) {
-				if (!EventWindow) {
-				    EventWindow = require("event_window");
-				}
-
 				EventWindow.addEvent({
 				    type: message.payload.connected
 					   ? Protocol.Events.USER_CONNECT : Protocol.Events.USER_DISCONNECT,
@@ -95,41 +83,41 @@ define("websocket_client", [
 			 }
 
 			 if (window.config.room) {
-				require("room").updateRoom(window.config.room.id);
+				Room.updateRoom(window.config.room.id);
 			 }
 
 			 break;
 
 		  case Protocol.MessageTypes.PLAYLIST_CHANGED:
 			 if (window.config.room) {
-				require("room").updateRoom(window.config.room.id);
+				Room.updateRoom(window.config.room.id);
 			 }
 
 			 break;
 
 		  case Protocol.MessageTypes.VIDEO_PLAY:
 			 if (message.payload && message.payload.youtubeID) {
-				require("player").loadVideoById(message.payload.youtubeID);
+				Player.loadVideoById(message.payload.youtubeID);
 			 } else {
-				require("player").playVideo({ seek: message.payload && message.payload.seek
+				Player.playVideo({ seek: message.payload && message.payload.seek
 				    ? message.payload.seek : undefined });
 			 }
 
 			 break;
 
 		  case Protocol.MessageTypes.VIDEO_PAUSE:
-			 require("player").pauseVideo();
+			 Player.pauseVideo();
 			 break;
 
 		  case Protocol.MessageTypes.VIDEO_SEEK:
-			 require("player").seekTo(message.payload.seekTo);
+			 Player.seekTo(message.payload.seekTo);
 			 break;
 
 		  case Protocol.MessageTypes.HEARTBEAT_REQUEST:
 			 send({
 				msgType  : Protocol.MessageTypes.HEARTBEAT_RESPONSE,
 				payload  : {
-				    playerStatus : require("player").getCurrentStatus(),
+				    playerStatus : Player.getCurrentStatus(),
 				},
 			 });
 			 break;
@@ -146,10 +134,6 @@ define("websocket_client", [
 				break;
 			 }
 
-			 if (!EventWindow) {
-				EventWindow = require("event_window");
-			 }
-
 			 if (message.payload.roomID) {
 				EventWindow.addEvent({
 				    type     : Protocol.Events.ROOM_MSG,
@@ -159,6 +143,25 @@ define("websocket_client", [
 			 } else if (message.payload.userID) {
 				// TODO
 			 }
+
+			 break;
+
+		  case Protocol.MessageTypes.ROOM_TYPING_START:
+		  case Protocol.MessageTypes.ROOM_TYPING_END:
+			 if (!message.payload || !message.payload.user
+				|| !message.payload.roomID
+				|| (message.payload.roomID
+				    && window.config.room
+				    && message.payload.roomID != window.config.room.id))
+			 {
+				break;
+			 }
+
+			 EventWindow.addEvent({
+				type     : message.msgType ==  Protocol.MessageTypes.ROOM_TYPING_START
+				    ? Protocol.Events.ROOM_TYPING_START : Protocol.Events.ROOM_TYPING_END,
+				user     : message.payload.user,
+			 });
 
 			 break;
 	   }
