@@ -35,7 +35,8 @@ define("playlist", [
     var clear = function() {
 	   currentPlaylist = [];
 	   videosMap = {};
-	   $("#playlist-container").html("");
+	   var emptyPlaylistTemplate = Handlebars.compile($("#empty-playlist-template").html());
+	   $("#playlist-container").html(emptyPlaylistTemplate);
     };
 
     var append = function(track, args) {

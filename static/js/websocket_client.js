@@ -36,7 +36,7 @@ define("websocket_client", [
 
     var onMessage = function(event) {
 	   var message = JSON.parse(event.data);
-	   var Room, Player, Playlist;
+	   var Room, Player, Playlist, EventWindow;
 
 	   if (message.error && message.payload && message.payload.errorMessage) {
 		  $.toaster({ priority: 'warning', title: 'WebSocket error', message: message.payload.errorMessage, settings: { timeout: 5000 } });
@@ -82,6 +82,24 @@ define("websocket_client", [
 				break;
 			 }
 
+			 if (message.payload.user) {
+				if (!EventWindow) {
+				    EventWindow = require("event_window");
+				}
+
+				EventWindow.addEvent({
+				    type: message.payload.connected
+					   ? Protocol.Events.USER_CONNECT : Protocol.Events.USER_DISCONNECT,
+				    username: message.payload.user.name,
+				});
+			 }
+
+			 if (window.config.room) {
+				require("room").updateRoom(window.config.room.id);
+			 }
+
+			 break;
+
 		  case Protocol.MessageTypes.PLAYLIST_CHANGED:
 			 if (window.config.room) {
 				require("room").updateRoom(window.config.room.id);
@@ -114,6 +132,34 @@ define("websocket_client", [
 				    playerStatus : require("player").getCurrentStatus(),
 				},
 			 });
+			 break;
+
+		  case Protocol.MessageTypes.CHAT_MSG:
+			 if (!message.payload || !message.payload.user
+				|| !(message.payload.roomID || message.payload.userID)
+				|| (message.payload.roomID
+				    && window.config.room
+				    && message.payload.roomID != window.config.room.id)
+				|| (message.payload.userID
+				    && message.payload.userID != window.config.user.id))
+			 {
+				break;
+			 }
+
+			 if (!EventWindow) {
+				EventWindow = require("event_window");
+			 }
+
+			 if (message.payload.roomID) {
+				EventWindow.addEvent({
+				    type     : Protocol.Events.ROOM_MSG,
+				    user     : message.payload.user,
+				    message  : message.payload.message,
+				});
+			 } else if (message.payload.userID) {
+				// TODO
+			 }
+
 			 break;
 	   }
     };

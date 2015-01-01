@@ -4,10 +4,11 @@ define([
     "playlist",
     "lib/handlebars",
     "protocol",
+    "event_window",
     "websocket_client",
     "lib/bootstrap",
     "lib/jquery-ui",
-], function($, Utils, Playlist, Handlebars, Protocol, WebSocketClient) {
+], function($, Utils, Playlist, Handlebars, Protocol, EventWindow, WebSocketClient) {
     "use strict";
 
     var args = {},
@@ -69,6 +70,8 @@ define([
 				    roomID : roomID,
 				}
 			 });
+
+			 EventWindow.initEventWindow();
 		  })
 		  .error(function() {
 			 $("#rooms-modal").modal("show");
@@ -113,7 +116,16 @@ define([
 		  $("[rel='tooltip']").tooltip();
 
 		  $("#rooms-modal").modal("hide");
+		  var containerHeight = $("body").outerHeight() - $("#header").outerHeight();
 		  $("#panel-container").removeClass("hidden");
+		  $("#panel-container").height(containerHeight);
+
+		  var eventWindowHeight = $(".main-panel-left-container").outerHeight() - $("#player").outerHeight();
+		  $("#event-window").removeClass("hidden");
+		  $("#event-window").height(eventWindowHeight);
+
+		  var eventWindowContentHeight = eventWindowHeight - $("#event-window-chat-line").outerHeight() - 10;
+		  $("#event-window-content").height(eventWindowContentHeight);
 	   });
     };
 

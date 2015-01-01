@@ -48,6 +48,9 @@
 			 ws.msgHandlers[Protocol.MessageTypes[msgType]] = [];
 
 			 switch (msgType) {
+				case "CHAT_MSG":
+				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onChatMsg);
+				    break;
 				case "HANDSHAKE_REQUEST":
 				    ws.msgHandlers[Protocol.MessageTypes[msgType]].push(onHandshakeRequest);
 				    break;
@@ -299,7 +302,7 @@
 				    }));
 
 				    if (roomID) {
-					   notifyUserListChanged(roomID);
+					   notifyUserListChanged(roomID, ws.user || undefined, false);
 				    }
 				})
 				.error(function(jqxhr, state, error) {
@@ -361,6 +364,59 @@
 
 		  if (self.onMessage) {
 			 self.onMessage(message);
+		  }
+	   };
+
+	   var onChatMsg = function(ws, message) {
+		  if (!checkMessageIntegrity(ws, message)) {
+			 return;
+		  }
+
+		  if (!message.payload || !message.payload.message
+				|| !(message.payload.roomID || message.payload.userID)) {
+			 sendMessage(ws, {
+				msgType : Protocol.MessageTypes.ERROR,
+				error   : true,
+				payload : {
+				    errorMessage : "No message, roomID or userID specified in the payload",
+				},
+			 });
+
+			 return;
+		  }
+
+		  logger.info(JSON.stringify({
+			 socketID    : ws.socketID,
+			 messageType : Protocol.MessageTypes.CHAT_MSG,
+			 message     : message.payload,
+		  }));
+
+		  if (message.payload.roomID) {
+			 Object.keys(self.rooms[message.payload.roomID]).forEach(function(socketID) {
+				var sock = self.rooms[message.payload.roomID][socketID];
+				sendMessage(sock, {
+				    msgType     : Protocol.MessageTypes.CHAT_MSG,
+				    payload     : {
+					   user    : ws.user,
+					   roomID  : message.payload.roomID,
+					   message : message.payload.message,
+				    },
+				});
+
+				$.post(
+					 Config.httpProtocol
+				    + "://"
+				    + Config.httpHost
+				    + "/" + Config.httpURI
+				    + "/json/create_room_message.php", {
+					   user_id: ws.userID,
+					   room_id: ws.roomID,
+					   message: message.payload.message,
+				    }
+				);
+			 });
+		  } else if (message.payload.userID) {
+			 // TODO
 		  }
 	   };
 
@@ -495,9 +551,27 @@
 			 },
 		  });
 
-		  notifyUserListChanged(ws.roomID);
-		  if (oldRoomID) {
-			 notifyUserListChanged(oldRoomID);
+		  if (ws.userID) {
+			 $.getJSON(
+				  Config.httpProtocol
+				+ "://"
+				+ Config.httpHost
+				+ "/" + Config.httpURI
+				+ "/json/user_get.php", {
+				    user_id    : ws.userID,
+			 })
+			 .success(function(response) {
+				ws.user = response.user;
+				notifyUserListChanged(ws.roomID, ws.user || undefined, true);
+				if (oldRoomID) {
+				    notifyUserListChanged(oldRoomID, ws.user || undefined, true);
+				}
+			 });
+		  } else {
+			 notifyUserListChanged(ws.roomID, ws.user || undefined, true);
+			 if (oldRoomID) {
+				notifyUserListChanged(oldRoomID, ws.user || undefined, true);
+			 }
 		  }
 	   };
 
@@ -744,12 +818,16 @@
 		  return socketID;
 	   };
 
-	   var notifyUserListChanged = function(roomID) {
+	   var notifyUserListChanged = function(roomID, user, connected) {
 		  Object.keys(self.rooms[roomID]).forEach(function(socketID) {
 			 var sock = self.rooms[roomID][socketID];
 			 sendMessage(sock, {
 				msgType : Protocol.MessageTypes.USER_LIST_CHANGED,
-				payload : { roomID : roomID },
+				payload : {
+				    roomID    : roomID,
+				    connected : connected,
+				    user      : user,
+				},
 			 });
 		  });
 	   };

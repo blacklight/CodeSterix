@@ -17,6 +17,7 @@ exports.MessageTypes = {
     CONNECTION_CLOSE   : "Connection close",
     USER_LIST_CHANGED  : "User list changed",
     PLAYLIST_CHANGED   : "Playlist changed",
+    CHAT_MSG           : "Chat message",
     VIDEO_PLAY         : "Video play",
     VIDEO_PAUSE        : "Video pause",
     VIDEO_RESUME       : "Video resume",
@@ -35,6 +36,13 @@ exports.VideoStatus = {
     UNSTARTED : "Unstarted",
     CUE       : "Cue",
     BUFFER    : "Buffer",
+};
+
+exports.Events = {
+    USER_CONNECT    : "User connection",
+    USER_DISCONNECT : "User disconnection",
+    VIDEO_ADD       : "Video added",
+    ROOM_MSG        : "Room message",
 };
 
 exports.HeartBeatTimeout = 2000;

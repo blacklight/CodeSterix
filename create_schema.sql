@@ -30,7 +30,7 @@ CREATE TABLE tonlist_user_session(
     created_at timestamp default '0000-00-00 00:00:00',
     last_updated_at timestamp default current_timestamp,
 
-    FOREIGN KEY(user_id) REFERENCES tonlist_user(id)
+    FOREIGN KEY(user_id) REFERENCES tonlist_user(id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS tonlist_room;
@@ -115,6 +115,30 @@ CREATE TABLE tonlist_user_room_history(
     created_at timestamp default current_timestamp,
 
     KEY(session_id),
+    KEY(room_id)
+);
+
+DROP TABLE IF EXISTS tonlist_room_message;
+CREATE TABLE tonlist_room_message(
+    id int(11) unsigned PRIMARY KEY auto_increment,
+    room_id mediumint(8) unsigned,
+    user_id int(10) unsigned,
+    message text,
+    created_at timestamp default current_timestamp,
+
+    FOREIGN KEY(user_id) REFERENCES tonlist_user(id) ON DELETE CASCADE,
+    FOREIGN KEY(room_id) REFERENCES tonlist_room(id) ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS tonlist_room_message_history;
+CREATE TABLE tonlist_room_message_history(
+    id int(11) unsigned PRIMARY KEY,
+    room_id mediumint(8) unsigned,
+    user_id int(10) unsigned,
+    message text,
+    created_at timestamp default current_timestamp,
+
+    KEY(user_id),
     KEY(room_id)
 );
 

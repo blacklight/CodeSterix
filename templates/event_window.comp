@@ -1,0 +1,37 @@
+<script id="event-window-template" type="text/x-handlebars-template">
+    <div id="event-window-content"></div>
+    <div id="event-window-chat-line">
+	   <input type="input" class="form-control chat-line" placeholder="Write a message to the video room">
+    </div>
+</script>
+
+<script id="event-window-empty-template" type="text/x-handlebars-template">
+    <div class="event-window-empty">No room events to display</div>
+</script>
+
+<script id="generic-event-template" type="text/x-handlebars-template">
+    <div class="generic-event">
+	   <div class="generic-event-timestamp">[{{timestamp}}]</div>
+
+	   {{#if userConnect}}
+		  <div class="generic-event-content">{{username}} entered the room</div>
+	   {{/if}}
+
+	   {{#if userDisconnect}}
+		  <div class="generic-event-content">{{username}} exited the room</div>
+	   {{/if}}
+    </div>
+</script>
+
+<script id="msg-event-template" type="text/x-handlebars-template">
+    <div class="msg-event">
+	   <div class="msg-event-timestamp">[{{timestamp}}]</div>
+	   {{#if isMine}}
+		  <div class="msg-event-username msg-event-username-mine">{{user.name}}:</div>
+	   {{else}}
+		  <div class="msg-event-username">{{user.name}}:</div>
+	   {{/if}}
+	   <div class="msg-event-content">{{message}}</div>
+    </div>
+</script>
+

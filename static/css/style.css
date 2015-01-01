@@ -4,7 +4,24 @@
 
 body {
     overflow: hidden;
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    height: 100% !important;
+}
+
+::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+    background: #171b20;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #303840;
+    -webkit-border-radius: 1ex;
+    -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.75);
+}
+
+::-webkit-scrollbar-corner {
+    background: #171b20;
 }
 
 #result {
@@ -27,7 +44,13 @@ body {
 }
 
 .main-panel-left {
-    padding-right: 5px !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+}
+
+.main-panel-left-container {
+    height: 100%;
+    position: relative;
 }
 
 .main-panel-center {
@@ -97,6 +120,10 @@ body {
  * Player  *
  ***********/
 
+#player {
+    height: 400px;
+}
+
 #player-no-video {
     background-image: url("../img/white_noise.gif");
     background-size: cover;
@@ -110,6 +137,63 @@ body {
     position: absolute;
     left: 37%;
     top: 180px;
+}
+
+/****************
+ * Event window *
+ ****************/
+
+#event-window {
+    position: absolute;
+    width: 100%;
+    top: 400px;
+    background-color: #171b20;
+}
+
+#event-window-content {
+    padding: 7px;
+    overflow-y: auto;
+}
+
+#event-window-chat-line {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+
+.event-window-empty {
+    text-align: center;
+    margin-top: 70;
+}
+
+.generic-event-timestamp, .msg-event-timestamp {
+    display: inline-block;
+    color: #505050;
+}
+
+.generic-event-content {
+    display: inline-block;
+    color: #44688f
+}
+
+.msg-event-content {
+    display: inline-block;
+}
+
+.msg-event-username {
+    display: inline-block;
+    color: darkcyan;
+}
+
+.msg-event-username-mine {
+    font-weight: bold;
+}
+
+.chat-line {
+    background-color: #171b20;
+    border: 1px solid #272b30;
+    border-right: 0;
+    color: #c8c8c8;
 }
 
 /***********
@@ -174,6 +258,7 @@ span.search-track-field {
 #playlist-container {
     height: 100%;
     padding: 10px;
+    overflow-y: auto;
 }
 
 .playlist-item-row {
@@ -323,6 +408,7 @@ span.search-track-field {
 #users-list {
     padding-top: 10px;
     border-top: 1px solid #3f3f3f;
+    overflow-y: auto;
 }
 
 .users-list-item {

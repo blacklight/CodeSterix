@@ -21,6 +21,7 @@ define("player", [
 	   $("#player-loading-video").removeClass("hidden");
 	   $("#player").player({
 		  width: "100%",
+		  height: "400",
 		  video: videoID,
 
 		  events: {

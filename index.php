@@ -28,6 +28,7 @@ require_once "auth.php";
 	   include('templates/player.comp');
 	   include('templates/rooms_modal.comp');
 	   include('templates/users_list.comp');
+	   include('templates/event_window.comp');
     ?>
 </head>
 
@@ -36,10 +37,13 @@ require_once "auth.php";
     <div id="rooms-modal-container"></div>
     <div class="row hidden" id="panel-container">
 	   <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 main-panel main-panel-left">
-		  <div id="player-no-video"></div>
-		  <div id="player-loading-video" class="hidden"></div>
-		  <div id="player"></div>
-		  <input type="hidden" id="player-tube">
+		  <div class="main-panel-left-container">
+			 <div id="player-no-video"></div>
+			 <div id="player-loading-video" class="hidden"></div>
+			 <div id="player"></div>
+			 <input type="hidden" id="player-tube">
+			 <div id="event-window" class="hidden"></div>
+		  </div>
 	   </div>
 	   <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 main-panel main-panel-center">
 		  <div id="playlist-container"></div>

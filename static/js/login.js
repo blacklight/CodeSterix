@@ -19,7 +19,6 @@ var signinCallback = function(authResult) {
 // Facebook sign-in
 var statusChangeCallback = function(response) {
     if (response.status !== 'connected') {
-	   alert("Please log into Facebook or authorize Tonlist app in order to proceed");
 	   return;
     }
 
